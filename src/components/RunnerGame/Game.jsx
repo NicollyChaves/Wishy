@@ -12,7 +12,7 @@ import char2 from "../../assets/imagens/runner/character2.png"; // exemplo de ou
 export default function Game() {
   const [running, setRunning] = useState(false);
   const [showSelector, setShowSelector] = useState(false);
-  const [character, setCharacter] = useState({ name: "Mascote", src: char1 });
+  const [character, setCharacter] = useState({ name: "Gohan", src: char1 });
   const [score, setScore] = useState(0);
   const containerRef = useRef(null);
 
@@ -100,17 +100,17 @@ export default function Game() {
             <div className="char-list">
               <button
                 className="char-option"
-                onClick={() => onCharacterChosen({ name: "Mascote", src: char1 })}
+                onClick={() => onCharacterChosen({ name: "Gohan", src: char1 })}
               >
-                <img src={char1} alt="Mascote" />
-                <span>Mascote</span>
+                <img src={char1} alt="Gohan" />
+                <span>Gohan</span>
               </button>
               <button
                 className="char-option"
-                onClick={() => onCharacterChosen({ name: "Heroína", src: char2 })}
+                onClick={() => onCharacterChosen({ name: "Goku", src: char2 })}
               >
-                <img src={char2} alt="Heroína" />
-                <span>Heroína</span>
+                <img src={char2} alt="Goku" />
+                <span>Goku</span>
               </button>
             </div>
             <button className="close" onClick={() => setShowSelector(false)}>

@@ -16,7 +16,7 @@ const Navbar = () => {
             <ul>
                 <li><Link to='hero' smooth={true} offset={0} duration={500}>Home</Link></li>
                 <li><Link to='somos'smooth={true} offset={-260} duration={500}>Somos</Link></li>
-                <li><Link to='projeto'smooth={true} offset={-280} duration={500}>Projeto</Link></li>
+                <li><Link to='projeto'smooth={true} offset={-280} duration={500}>Projetos</Link></li>
                 <li><Link to='criadores'smooth={true} offset={-260} duration={500}>Criadores</Link></li>
                 <li><Link to='contact'smooth={true} offset={-260} duration={500}>Contato</Link></li>
                 <li><button className='btn' onClick={() => navigate('/jogo')}>Jogo</button></li>

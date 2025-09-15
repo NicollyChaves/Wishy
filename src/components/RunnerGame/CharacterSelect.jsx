@@ -5,8 +5,8 @@ import char2 from "../../assets/imagens/runner/character2.png";
 
 export default function CharacterSelect({ onClose, onChoose }) {
   const options = [
-    { name: "Ursinho", src: char1 },
-    { name: "Robozinho", src: char2 },
+    { name: "Gohan", src: char1 },
+    { name: "Goku", src: char2 },
   ];
 
   return (
