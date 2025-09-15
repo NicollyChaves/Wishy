@@ -1,0 +1,22 @@
+.footer{
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #797979;
+    padding: 15px 0;
+}
+
+.footer ul li{
+    list-style: none;
+    display: inline-block;
+    margin-left: 20px;
+    font-size: 14px;
+    color: #0BA0F4;
+}
+
+.footer ul li:hover{
+    color: #FA21C5;
+    transition: 0.3s;
+}
+

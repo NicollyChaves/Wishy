@@ -1,0 +1,89 @@
+.criadores {
+    margin: 80px auto;
+    padding: 0 80px;
+    position: relative;
+}
+
+.btn-criadores {
+    background-color: #0BA0F4;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.btn-criadores:hover {
+    background-color: #FA21C5;
+}
+
+.back-btn {
+  right: 0;
+}
+
+.next-btn {
+  left: 0;
+}
+
+.cards {
+    overflow: hidden;
+}
+
+.cards ul {
+    display: flex;
+    width: 200%;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+.cards ul li {
+    list-style: none;
+    width: 50%;
+    padding: 20px;
+}
+
+.card {
+    box-shadow: 0 0px 20px rgba(0, 0, 0, 0.05);
+    padding: 40px;
+    border-radius: 10px;
+    color: black;
+    line-height: 1.4;
+    background: #fff;
+}
+
+.card img {
+    width: 65px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 4px solid #0BA0F4;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.user-info h3 {
+    color: #0BA0F4;
+}
+
+p {
+    font-weight: 90;
+    font-size: 14px;
+}
+
+.user-info span {
+    font-size: 12px;
+    font-weight: 90;
+    font-family: Arial, Helvetica, sans-serif;
+}

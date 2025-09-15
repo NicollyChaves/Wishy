@@ -1,0 +1,39 @@
+.somos{
+    margin: 100px auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+}
+
+.somos-left{
+    flex-basis: 40%;
+}
+
+.somos-right{
+    flex-basis: 56%;
+}
+
+.somos-img{
+    width: 100%;
+    border-radius: 10px;
+}
+
+.somos h3{
+    font-weight: 600;
+    font-weight: 16px;
+    color: #0BA0F4;
+}
+
+.somos h2{
+    font-size: 35px;
+    color: #0BA0F4;
+    margin: 10px 0;
+    max-width: 400px;
+}
+
+.somos p{
+    color: black;
+    margin-bottom: 15px;
+    font-weight: 100;
+}

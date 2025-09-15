@@ -1,0 +1,22 @@
+/*Paleta de cores
+
+Azul - #0BA0F4
+Pink - #FA21C5
+Preto - #000000
+Branco - #FFFFFF */
+
+.titulo{
+    text-align: center;
+    color: #0BA0F4;
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 70px 0 30px;
+}
+
+.titulo h2{
+    font-size: 40px;
+    color: #0BA0F4;
+    margin-top: 5px;
+    text-transform: none;
+}
