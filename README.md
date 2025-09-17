@@ -38,7 +38,7 @@ Por meio de atividades gamificadas, o jogo busca:
 - [React.js](https://react.dev/) ⚛️  
 - [Node.js](https://nodejs.org/) 🌱  
 - [JavaScript](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)  
-- [CSS3](https://developer.mozilla.org/pt-BR/docs/Web/CSS) 🎨  
+- [CSS](https://developer.mozilla.org/pt-BR/docs/Web/CSS) 🎨  
 - [React Router](https://reactrouter.com/)  
 - [React Icons](https://react-icons.github.io/react-icons/)  
 
