@@ -1,7 +1,7 @@
 # 🎮 Projeto Wishy 
 
 <div align="center">
-  <img src="../../assets/imagens/Logo.png" alt="Logo do Jogo" width="200"/>
+  <img src="src/assets/imagens/Logo.png" alt="Logo do Jogo" width="200"/>
   <p><i>Um joguinho divertido feito com muito carinho 💖</i></p>
 </div>
 
