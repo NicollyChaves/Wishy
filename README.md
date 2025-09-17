@@ -20,6 +20,15 @@ Por meio de atividades gamificadas, o jogo busca:
 
 ---
 
+## 👥 Integrantes
+
+- Andrey Souza - 38805481
+- Eliane Santos - 38566320
+- Erick Chaves - 38566427
+- Nicolly Chaves - 38566605
+
+---
+
 ## 🚧 Status do Projeto
 > Em desenvolvimento 🚀
 
