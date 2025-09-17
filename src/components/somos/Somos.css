@@ -37,3 +37,23 @@
     margin-bottom: 15px;
     font-weight: 100;
 }
+
+
+/* ---- Responsive Design ---- */
+
+@media (max-width: 800px) {
+    .somos{
+        flex-direction: column;
+    }
+
+    .somos-left{
+        flex-basis: 100%;
+        margin: 20px;
+        order: 2;
+    }
+
+    .somos-right{
+        flex-basis: 100%;
+        margin: 20px;
+    }
+}

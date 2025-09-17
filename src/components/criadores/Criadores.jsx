@@ -13,7 +13,7 @@ function Criadores() {
   let tx = 0;
 
   const cardForward = () => {
-    if(tx > -50){
+    if(tx > -75){
       tx -= 25;
     }
     cards.current.style.transform = `translateX(${tx}%)`;
