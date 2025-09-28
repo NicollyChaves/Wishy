@@ -1,0 +1,439 @@
+/* src/components/RunnerGame/Fase_5.css */
+
+.runner-main {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(#87CEEB, #bfe9ff);
+    cursor: pointer;
+}
+
+/* fundo fixo */
+.bg-layer.fixed {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+
+/* Logo fixa no topo direito */
+.logo-top {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+}
+
+.logo-top img {
+    width: 140px;
+    height: auto;
+    opacity: 0.9;
+}
+
+/* UI top */
+.ui-top {
+    position: absolute;
+    z-index: 10;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reward-btn {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+/* frase “embaralhada” exibida */
+.current-word {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #0ba0f4;
+    z-index: 12;
+}
+
+/* personagem */
+.character-wrap {
+    position: absolute;
+    left: 15%;
+    bottom: 20%;
+    z-index: 12;
+    transition: all 0.3s ease;
+}
+
+.character-wrap.top {
+    bottom: 60%;
+}
+
+.character-wrap.middle {
+    bottom: 35%;
+}
+
+.character-wrap.bottom {
+    bottom: 10%;
+}
+
+.character {
+    width: 140px;
+    height: auto;
+}
+
+.character.idle {
+    animation: bob 1.2s ease-in-out infinite;
+}
+
+.character.run {
+    animation: run-bobbing 0.4s steps(2) infinite;
+    transform: translateY(-6px);
+}
+
+@keyframes bob {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes run-bobbing {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* palavras (obstáculos) */
+.letter {
+    position: absolute;
+    right: -120px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fa21c5;
+    animation: moveLetter 5s linear forwards;
+    z-index: 15;
+}
+
+.letter.top {
+    bottom: 60%;
+}
+
+.letter.middle {
+    bottom: 35%;
+}
+
+.letter.bottom {
+    bottom: 10%;
+}
+
+@keyframes moveLetter {
+    from {
+        right: -120px;
+    }
+
+    to {
+        right: 110%;
+    }
+}
+
+/* dica de início */
+.hint {
+    position: absolute;
+    z-index: 13;
+    left: 50%;
+    bottom: 4%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.35);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-weight: 600;
+}
+
+/* modal de seleção de personagem */
+.char-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.char-card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    width: 80%;
+    max-width: 500px;
+    color: #FA21C5;
+}
+
+.char-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin: 40px 0;
+}
+
+.char-option {
+    background: #f5f5f5;
+    border: none;
+    border-radius: 12px;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    color: #0BA0F4;
+}
+
+.char-option:hover {
+    transform: scale(1.05);
+    background: #e3e3e3;
+}
+
+.char-option img {
+    width: 60px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.close {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #FA21C5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* modal fim da fase */
+.end-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.end-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+    color: #0BA0F4;
+}
+
+.end-card h2 {
+    margin-bottom: 16px;
+    color: #FA21C5;
+}
+
+.end-card button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #0BA0F4;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.end-card button:hover {
+    background: #0880c0;
+}
+
+
+/* Responsividade */
+
+/* Celulares (460px x 832px) */
+@media (max-width: 460px) {
+    .logo-top img {
+        width: 100px;
+    }
+
+    .ui-top {
+        top: 10px;
+        left: 10px;
+        gap: 5px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 15px;
+        height: 150px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 60px;
+    }
+
+    .character {
+        width: 100px;
+    }
+
+    .end-card {
+        width: 85%;
+    }
+
+    .confetti {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Tablets (481px até 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .logo-top img {
+        width: 110px;
+    }
+
+    .ui-top {
+        top: 12px;
+        left: 12px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 16px;
+    }
+
+    .time-bar {
+        width: 18px;
+        height: 180px;
+        top: 20px;
+    }
+
+    .character-wrap {
+        left: 80px;
+    }
+
+    .character {
+        width: 110px;
+    }
+
+    .end-card {
+        width: 80%;
+    }
+
+    .confetti {
+        width: 9px;
+        height: 9px;
+    }
+}
+
+/* Notebooks/PCs médios (769px até 1366px) */
+@media (min-width: 769px) and (max-width: 1366px) {
+    .logo-top img {
+        width: 120px;
+    }
+
+    .ui-top {
+        top: 16px;
+        left: 16px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 18px;
+    }
+
+    .time-bar {
+        width: 20px;
+        height: 200px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 100px;
+    }
+
+    .character {
+        width: 120px;
+    }
+
+    .end-card {
+        width: 70%;
+    }
+
+    .confetti {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Monitores grandes (1367px+) */
+@media (min-width: 1367px) {
+    .logo-top img {
+        width: 140px;
+    }
+
+    .ui-top {
+        top: 16px;
+        left: 16px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 20px;
+    }
+
+    .time-bar {
+        width: 25px;
+        height: 250px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 120px;
+    }
+
+    .character {
+        width: 140px;
+    }
+
+    .end-card {
+        width: 60%;
+    }
+
+    .confetti {
+        width: 12px;
+        height: 12px;
+    }
+}

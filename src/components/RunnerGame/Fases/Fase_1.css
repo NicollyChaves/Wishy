@@ -1,0 +1,432 @@
+.runner-main {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(#87CEEB, #bfe9ff);
+    cursor: pointer;
+}
+
+.bg-layer.fixed {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+
+/* Logo fixa */
+.logo-top {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+}
+
+.logo-top img {
+    width: 120px;
+    height: auto;
+}
+
+/* UI */
+.ui-top {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 30;
+}
+
+.reward-btn {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.current-word {
+    background: #fff8c6;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid #333;
+}
+
+/* barra de tempo */
+.time-bar {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 20px;
+    height: 200px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #ddd;
+    z-index: 40;
+}
+
+.time-fill {
+    width: 100%;
+    background: linear-gradient(to top, #fa21c5, #0ba0f4);
+    transition: height 1s linear;
+    height: 100%;
+}
+
+/* personagem */
+.character-wrap {
+    position: absolute;
+    left: 100px;
+    z-index: 15;
+}
+
+.character {
+    width: 120px;
+    height: auto;
+}
+
+.character.idle {
+    animation: bob 1.2s ease-in-out infinite;
+}
+
+.character.run {
+    animation: run-bobbing 0.4s steps(2) infinite;
+}
+
+@keyframes bob {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes run-bobbing {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* entidades */
+.entity {
+    position: absolute;
+    font-size: 40px;
+    font-weight: bold;
+    z-index: 12;
+}
+
+.entity img {
+    width: 60px;
+    height: auto;
+}
+
+/* dica */
+.hint {
+    position: absolute;
+    left: 50%;
+    bottom: 5%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* modal seleção */
+.char-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.char-card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    color: #FA21C5;
+}
+
+.char-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.char-option {
+    background: #f5f5f5;
+    border: none;
+    border-radius: 12px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.char-option img {
+    width: 60px;
+}
+
+.close {
+    padding: 8px 16px;
+    background: #FA21C5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}
+
+/* fim do jogo */
+.end-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.end-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+    color: #0BA0F4;
+    position: relative;
+    overflow: hidden;
+}
+
+.end-card h2 {
+    color: #FA21C5;
+}
+
+.end-card button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #0BA0F4;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+}
+
+/* confetes */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: red;
+    top: -20px;
+    animation: fall 3s linear infinite;
+}
+
+.confetti:nth-child(3n) {
+    background: yellow;
+}
+
+.confetti:nth-child(3n+1) {
+    background: blue;
+}
+
+.confetti:nth-child(3n+2) {
+    background: green;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(400px) rotate(360deg);
+    }
+}
+
+
+/* Responsividade */
+
+/* Celulares (460px x 832px) */
+@media (max-width: 460px) {
+    .logo-top img {
+        width: 100px;
+    }
+
+    .ui-top {
+        top: 10px;
+        left: 10px;
+        gap: 5px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 15px;
+        height: 150px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 60px;
+    }
+
+    .character {
+        width: 100px;
+    }
+
+    .end-card {
+        width: 85%;
+    }
+
+    .confetti {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Tablets (481px até 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .logo-top img {
+        width: 110px;
+    }
+
+    .ui-top {
+        top: 12px;
+        left: 12px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 18px;
+        height: 180px;
+        top: 20px;
+    }
+
+    .character-wrap {
+        left: 80px;
+    }
+
+    .character {
+        width: 110px;
+    }
+
+    .end-card {
+        width: 80%;
+    }
+
+    .confetti {
+        width: 9px;
+        height: 9px;
+    }
+}
+
+/* Notebooks/PCs médios (769px até 1366px) */
+@media (min-width: 769px) and (max-width: 1366px) {
+    .logo-top img {
+        width: 120px;
+    }
+
+    .ui-top {
+        top: 16px;
+        left: 16px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 20px;
+        height: 200px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 100px;
+    }
+
+    .character {
+        width: 120px;
+    }
+
+    .end-card {
+        width: 70%;
+    }
+
+    .confetti {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Monitores grandes (1367px+) */
+@media (min-width: 1367px) {
+    .logo-top img {
+        width: 140px;
+    }
+
+    .ui-top {
+        top: 16px;
+        left: 16px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 25px;
+        height: 250px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 120px;
+    }
+
+    .character {
+        width: 140px;
+    }
+
+    .end-card {
+        width: 60%;
+    }
+
+    .confetti {
+        width: 12px;
+        height: 12px;
+    }
+}

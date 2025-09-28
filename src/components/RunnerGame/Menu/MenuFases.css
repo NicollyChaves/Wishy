@@ -1,0 +1,169 @@
+.menu-fases {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: url("../../../assets/imagens/runner/plano_fundo_menu.jpg") no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.titulo-mapa {
+  margin: 20px 0;
+  font-size: 48px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
+  font-family: 'DM Serif Display', serif;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.mapa {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.fase-botao {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid white;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.fase-botao:hover {
+  transform: scale(1.1);
+  background: rgba(50, 150, 250, 0.8);
+}
+
+.fase-botao.bloqueada {
+  background: rgba(80, 80, 80, 0.8);
+  cursor: not-allowed;
+  border: 3px solid gray;
+}
+
+
+/* ===== Card para pedir nome ===== */
+.card-nome {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+ 
+.card-nome h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+  color: #333;
+}
+ 
+.card-nome input {
+  width: 80%;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  margin-bottom: 15px;
+}
+ 
+.card-nome .btn-confirmar {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+ 
+.card-nome .btn-confirmar:hover {
+  background: #0056b3;
+}
+
+
+/* ============================
+   📱 Celulares pequenos (até 480px)
+   ============================ */
+@media (max-width: 480px) {
+  .titulo-mapa {
+    font-size: 28px;
+    margin: 10px 0;
+    margin-top: 50px;
+  }
+
+  .fase-botao {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    border: 2px solid white;
+  }
+}
+
+/* ============================
+   📱 Tablets (481px até 768px)
+   ============================ */
+@media (min-width: 481px) and (max-width: 768px) {
+  .titulo-mapa {
+    font-size: 36px;
+    margin: 15px 0;
+    margin-top: 50px;
+  }
+
+  .fase-botao {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+    border: 2.5px solid white;
+  }
+}
+
+/* ============================
+   💻 Notebooks/PCs médios (769px até 1366px)
+   ============================ */
+@media (min-width: 769px) and (max-width: 1366px) {
+  .titulo-mapa {
+    font-size: 42px;
+    margin-top: 50px;
+  }
+
+  .fase-botao {
+    width: 55px;
+    height: 55px;
+    font-size: 18px;
+  }
+}
+
+/* ============================
+   🖥️ Monitores grandes (1367px+)
+   ============================ */
+@media (min-width: 1367px) {
+  .titulo-mapa {
+    font-size: 52px;
+    margin-top: 50px;
+  }
+
+  .fase-botao {
+    width: 70px;
+    height: 70px;
+    font-size: 22px;
+  }
+}
