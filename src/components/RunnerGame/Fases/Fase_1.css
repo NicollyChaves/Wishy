@@ -41,9 +41,10 @@
 
 .reward-btn {
     background: rgba(255, 255, 255, 0.95);
-    padding: 10px 16px;
+    padding: 14px 16px;
     border-radius: 20px;
     font-weight: bold;
+    width: 50%;
 }
 
 .current-word {
@@ -62,7 +63,7 @@
 .time-bar {
     position: absolute;
     right: 10px;
-    top: 10px;
+    bottom: 0;
     width: 20px;
     height: 200px;
     border: 2px solid #333;
