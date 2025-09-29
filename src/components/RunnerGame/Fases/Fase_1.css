@@ -41,7 +41,7 @@
 
 .reward-btn {
     background: rgba(255, 255, 255, 0.95);
-    padding: 18px 16px;
+    padding: 16px 16px;
     border-radius: 20px;
     font-weight: bold;
 }
@@ -56,13 +56,14 @@
     align-items: center;
     gap: 8px;
     border: 2px solid #333;
+    left: 0;
 }
 
 /* barra de tempo */
 .time-bar {
     position: absolute;
     right: 10px;
-    top: 120px;
+    top: 10px;
     width: 20px;
     height: 200px;
     border: 2px solid #333;
