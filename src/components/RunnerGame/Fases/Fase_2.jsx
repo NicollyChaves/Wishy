@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_2.css";
 
-import bg1 from "../../../assets/imagens/runner/Fundo.png";
-import char1 from "../../../assets/imagens/runner/character1.png";
-import char2 from "../../../assets/imagens/runner/character2.png";
-import char3 from "../../../assets/imagens/runner/character3.png";
-import char4 from "../../../assets/imagens/runner/character4.png";
-import char5 from "../../../assets/imagens/runner/character5.png";
-import logo from "../../../assets/imagens/runner/Logo.png"; 
+import bg1 from "../../../assets/imagens/runner/Plano_fundo_2.jpg";
+import char1 from "../../../assets/imagens/runner/character1.gif";
+import char2 from "../../../assets/imagens/runner/character2.gif";
+import char3 from "../../../assets/imagens/runner/character3.gif";
+import char4 from "../../../assets/imagens/runner/character4.gif";
+import char5 from "../../../assets/imagens/runner/character5.gif";
+import logo from "../../../assets/imagens/runner/Logo_2.png";
 
 // Palavra alvo
 const targetWord = "SOL";
@@ -155,47 +155,47 @@ export default function Fase2({ onNext }) {
                                     <button
                                         className="char-option"
                                         onClick={() =>
-                                            onCharacterChosen({ name: "Gato", src: char1 })
+                                            onCharacterChosen({ name: "Lulix", src: char1 })
                                         }
                                     >
-                                        <img src={char1} alt="Gato" />
-                                        <span>Gato</span>
+                                        <img src={char1} alt="Lulix" />
+                                        <span>Lulix</span>
                                     </button>
                                     <button
                                         className="char-option"
                                         onClick={() =>
-                                            onCharacterChosen({ name: "Galo", src: char2 })
+                                            onCharacterChosen({ name: "Rafiki", src: char2 })
                                         }
                                     >
-                                        <img src={char2} alt="Galo" />
-                                        <span>Galo</span>
+                                        <img src={char2} alt="Rafiki" />
+                                        <span>Rafiki</span>
                                     </button>
                                     <button
                                         className="char-option"
                                         onClick={() =>
-                                            onCharacterChosen({ name: "Cachorro", src: char3 })
+                                            onCharacterChosen({ name: "Nikko", src: char3 })
                                         }
                                     >
-                                        <img src={char3} alt="Cachorro" />
-                                        <span>Cachorro</span>
+                                        <img src={char3} alt="Nikko" />
+                                        <span>Nikko</span>
                                     </button>
                                     <button
                                         className="char-option"
                                         onClick={() =>
-                                            onCharacterChosen({ name: "Urso", src: char4 })
+                                            onCharacterChosen({ name: "Pippli", src: char4 })
                                         }
                                     >
-                                        <img src={char4} alt="Urso" />
-                                        <span>Urso</span>
+                                        <img src={char4} alt="Pippli" />
+                                        <span>Pippli</span>
                                     </button>
                                     <button
                                         className="char-option"
                                         onClick={() =>
-                                            onCharacterChosen({ name: "Pato", src: char5 })
+                                            onCharacterChosen({ name: "Zuppy", src: char5 })
                                         }
                                     >
-                                        <img src={char5} alt="Pato" />
-                                        <span>Pato</span>
+                                        <img src={char5} alt="Zuppy" />
+                                        <span>Zuppy</span>
                                     </button>
                                 </div>
                                 <button className="close" onClick={() => setShowSelector(false)}>

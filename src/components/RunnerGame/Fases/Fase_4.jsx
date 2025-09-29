@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_4.css";
 
-import bg1 from "../../../assets/imagens/runner/Fundo.png";
-import char1 from "../../../assets/imagens/runner/character1.png";
-import char2 from "../../../assets/imagens/runner/character2.png";
-import char3 from "../../../assets/imagens/runner/character3.png";
-import char4 from "../../../assets/imagens/runner/character4.png";
-import char5 from "../../../assets/imagens/runner/character5.png";
-import logo from "../../../assets/imagens/runner/Logo.png";
+import bg1 from "../../../assets/imagens/runner/Plano_fundo_4.jpg";
+import char1 from "../../../assets/imagens/runner/character1.gif";
+import char2 from "../../../assets/imagens/runner/character2.gif";
+import char3 from "../../../assets/imagens/runner/character3.gif";
+import char4 from "../../../assets/imagens/runner/character4.gif";
+import char5 from "../../../assets/imagens/runner/character5.gif";
+import logo from "../../../assets/imagens/runner/Logo_2.png";
 
 // cenas com possíveis palavras
 const scenes = [
@@ -166,7 +166,7 @@ export default function Fase4({ onNext }) {
                                             onClick={() => onCharacterChosen({ name: `Char${idx + 1}`, src: char })}
                                         >
                                             <img src={char} alt={`Char${idx + 1}`} />
-                                            <span>Char {idx + 1}</span>
+                                            <span> {idx + 1}</span>
                                         </button>
                                     ))}
                                 </div>

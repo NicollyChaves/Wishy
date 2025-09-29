@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import "./MenuFases.css";
 
-export default function MenuFases({ faseAtual, setFase }) {
-    const [nome, setNome] = useState("");
-    const [nomeConfirmado, setNomeConfirmado] = useState(false);
-
+export default function MenuFases({
+    faseAtual,
+    setFase,
+    nome,
+    setNome,
+    nomeConfirmado,
+    setNomeConfirmado,
+}) {
     const fases = [
         { id: 1, top: "90%", left: "70%" },
         { id: 2, top: "90%", left: "45%" },

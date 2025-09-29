@@ -1,13 +1,13 @@
 // src/components/RunnerGame/Fase7.jsx
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_7.css";
-import bg1 from "../../../assets/imagens/runner/Fundo.png";
-import char1 from "../../../assets/imagens/runner/character1.png";
-import char2 from "../../../assets/imagens/runner/character2.png";
-import char3 from "../../../assets/imagens/runner/character3.png";
-import char4 from "../../../assets/imagens/runner/character4.png";
-import char5 from "../../../assets/imagens/runner/character5.png";
-import logo from "../../../assets/imagens/runner/Logo.png";
+import bg1 from "../../../assets/imagens/runner/Plano_fundo_7.jpg";
+import char1 from "../../../assets/imagens/runner/character1.gif";
+import char2 from "../../../assets/imagens/runner/character2.gif";
+import char3 from "../../../assets/imagens/runner/character3.gif";
+import char4 from "../../../assets/imagens/runner/character4.gif";
+import char5 from "../../../assets/imagens/runner/character5.gif";
+import logo from "../../../assets/imagens/runner/Logo_2.png";
 
 // Obstáculos que o personagem enfrentará
 const obstacles = [
@@ -160,25 +160,25 @@ export default function Fase7({ onNext }) {
                             <div className="char-card" onClick={(e) => e.stopPropagation()}>
                                 <h2>Escolha seu personagem</h2>
                                 <div className="char-list">
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Gato", src: char1 })}>
-                                        <img src={char1} alt="Gato" />
-                                        <span>Gato</span>
+                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Luliz", src: char1 })}>
+                                        <img src={char1} alt="Luliz" />
+                                        <span>Luliz</span>
                                     </button>
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Galo", src: char2 })}>
-                                        <img src={char2} alt="Galo" />
-                                        <span>Galo</span>
+                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Rafiki", src: char2 })}>
+                                        <img src={char2} alt="Rafiki" />
+                                        <span>Rafiki</span>
                                     </button>
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Cachorro", src: char3 })}>
-                                        <img src={char3} alt="Cachorro" />
-                                        <span>Cachorro</span>
+                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Nikko", src: char3 })}>
+                                        <img src={char3} alt="Nikko" />
+                                        <span>Nikko</span>
                                     </button>
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Urso", src: char4 })}>
-                                        <img src={char4} alt="Urso" />
-                                        <span>Urso</span>
+                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Pippli", src: char4 })}>
+                                        <img src={char4} alt="Pippli" />
+                                        <span>Pippli</span>
                                     </button>
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Pato", src: char5 })}>
-                                        <img src={char5} alt="Pato" />
-                                        <span>Pato</span>
+                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Zuppy", src: char5 })}>
+                                        <img src={char5} alt="Zuppy" />
+                                        <span>Zuppy</span>
                                     </button>
                                 </div>
                                 <button className="close" onClick={() => setShowSelector(false)}>Fechar</button>
