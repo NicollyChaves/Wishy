@@ -31,20 +31,20 @@
 /* UI */
 .ui-top {
     position: absolute;
-    top: 16px;
-    left: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 30;
 }
 
 .reward-btn {
     background: rgba(255, 255, 255, 0.95);
-    padding: 10px 16px;
+    padding: 14px 20px;
     border-radius: 20px;
     font-weight: bold;
+    font-size: 20px;
 }
+
 
 .current-word {
     background: #fff8c6;
@@ -430,5 +430,3 @@
         height: 12px;
     }
 }
-
-"
