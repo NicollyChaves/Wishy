@@ -28,26 +28,8 @@
     height: auto;
 }
 
-/* Palavra atual no topo */
-.current-word-top {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fff8c6;
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-size: 22px;
-    font-weight: bold;
-    border: 2px solid #333;
-    z-index: 30;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* UI Pontuação (lateral esquerda) */
-.ui-score {
+/* UI */
+.ui-top {
     position: absolute;
     left: 20px;
     top: 50%;
@@ -63,13 +45,26 @@
     font-size: 20px;
 }
 
-/* barra de tempo agora em baixo */
-.time-bar-bottom {
+
+.current-word {
+    background: #fff8c6;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid #333;
+}
+
+/* barra de tempo */
+.time-bar {
     position: absolute;
     right: 10px;
-    bottom: 20px;
-    width: 200px;
-    height: 20px;
+    top: 10px;
+    width: 20px;
+    height: 200px;
     border: 2px solid #333;
     border-radius: 10px;
     overflow: hidden;
@@ -78,10 +73,10 @@
 }
 
 .time-fill {
-    height: 100%;
-    background: linear-gradient(to right, #fa21c5, #0ba0f4);
-    transition: width 1s linear;
     width: 100%;
+    background: linear-gradient(to top, #fa21c5, #0ba0f4);
+    transition: height 1s linear;
+    height: 100%;
 }
 
 /* personagem */
@@ -271,3 +266,169 @@
         transform: translateY(400px) rotate(360deg);
     }
 }
+
+
+/* Responsividade */
+
+/* Celulares (460px x 832px) */
+@media (max-width: 460px) {
+    .logo-top img {
+        width: 100px;
+    }
+
+    .ui-top {
+        top: 10px;
+        left: 10px;
+        gap: 5px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 15px;
+        height: 150px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 60px;
+    }
+
+    .character {
+        width: 100px;
+    }
+
+    .end-card {
+        width: 85%;
+    }
+
+    .confetti {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Tablets (481px até 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .logo-top img {
+        width: 110px;
+    }
+
+    .ui-top {
+        top: 12px;
+        left: 12px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 18px;
+        height: 180px;
+        top: 20px;
+    }
+
+    .character-wrap {
+        left: 80px;
+    }
+
+    .character {
+        width: 110px;
+    }
+
+    .end-card {
+        width: 80%;
+    }
+
+    .confetti {
+        width: 9px;
+        height: 9px;
+    }
+}
+
+/* Notebooks/PCs médios (769px até 1366px) */
+@media (min-width: 769px) and (max-width: 1366px) {
+    .logo-top img {
+        width: 120px;
+    }
+
+    .ui-top {
+        top: 16px;
+        left: 16px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 20px;
+        height: 200px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 100px;
+    }
+
+    .character {
+        width: 120px;
+    }
+
+    .end-card {
+        width: 70%;
+    }
+
+    .confetti {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Monitores grandes (1367px+) */
+@media (min-width: 1367px) {
+    .logo-top img {
+        width: 140px;
+    }
+
+    .ui-top {
+        top: 16px;
+        left: 16px;
+    }
+
+    .reward-btn,
+    .current-word {
+        font-size: 14px;
+    }
+
+    .time-bar {
+        width: 25px;
+        height: 250px;
+        top: 10px;
+    }
+
+    .character-wrap {
+        left: 120px;
+    }
+
+    .character {
+        width: 140px;
+    }
+
+    .end-card {
+        width: 60%;
+    }
+
+    .confetti {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+"
