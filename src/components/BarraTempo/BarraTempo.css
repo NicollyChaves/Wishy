@@ -1,0 +1,19 @@
+.time-bar {
+    position: absolute;
+    bottom: 60px;
+    right: 20px;
+    width: 350px;
+    height: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #ffffff;
+    z-index: 40;
+}
+
+.time-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to right, #FA21C5, #0BA0F4);
+    transition: width 1s linear;
+}

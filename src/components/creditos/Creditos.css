@@ -1,0 +1,114 @@
+/* Botão de Créditos */
+.btn-creditos {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    background: linear-gradient(135deg, #fa21c5, #0ba0f4);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.btn-creditos:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(250, 33, 197, 0.6);
+}
+
+/* Tela escurecida */
+.creditos-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Cartão de Créditos */
+.creditos-card {
+    background: white;
+    color: #333;
+    border-radius: 20px;
+    padding: 30px 40px;
+    text-align: center;
+    width: 420px;
+    max-width: 90%;
+    animation: slideUp 0.4s ease;
+    box-shadow: 0 0 25px rgba(250, 33, 197, 0.4);
+}
+
+.creditos-card h2 {
+    color: #fa21c5;
+    margin-bottom: 10px;
+}
+
+.sub {
+    color: #0ba0f4;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.creditos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.membro h3 {
+    color: #fa21c5;
+    margin-bottom: 4px;
+}
+
+.prof {
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+/* Botão de Fechar */
+.btn-fechar {
+    background: #fa21c5;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-fechar:hover {
+    background: #0ba0f4;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

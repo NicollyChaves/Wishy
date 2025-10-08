@@ -1,0 +1,48 @@
+.char-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.char-card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    color: #FA21C5;
+}
+
+.char-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.char-option {
+    background: #f5f5f5;
+    border: none;
+    border-radius: 12px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.char-option img {
+    width: 60px;
+}
+
+.close {
+    padding: 8px 16px;
+    background: #FA21C5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
