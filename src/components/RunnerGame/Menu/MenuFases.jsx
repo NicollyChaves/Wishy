@@ -10,13 +10,13 @@ export default function MenuFases({
     setNomeConfirmado,
 }) {
     const fases = [
-        { id: 1, top: "90%", left: "70%" },
-        { id: 2, top: "90%", left: "45%" },
-        { id: 3, top: "80%", left: "65%" },
-        { id: 4, top: "75%", left: "50%" },
-        { id: 5, top: "65%", left: "58%" },
-        { id: 6, top: "65%", left: "68%" },
-        { id: 7, top: "55%", left: "65%" },
+        { id: 1, top: "85%", left: "70%" },
+        { id: 2, top: "85%", left: "45%" },
+        { id: 3, top: "75%", left: "65%" },
+        { id: 4, top: "70%", left: "50%" },
+        { id: 5, top: "60%", left: "58%" },
+        { id: 6, top: "60%", left: "68%" },
+        { id: 7, top: "45%", left: "65%" },
     ];
 
     const handleConfirmarNome = () => {

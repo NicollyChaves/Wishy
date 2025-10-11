@@ -59,7 +59,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.95);
+  background-color: transparent;
+  border: 1px solid #fff;
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
@@ -67,25 +68,32 @@
   width: 90%;
   max-width: 400px;
 }
- 
+
 .card-nome h2 {
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   font-size: 22px;
-  color: #333;
+  color: white;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
 }
- 
+
 .card-nome input {
   width: 80%;
   padding: 10px;
   font-size: 16px;
-  border: 2px solid #ccc;
+  background-color: transparent;
+  border: 1px solid #fff; 
+  color: white;
   border-radius: 10px;
   outline: none;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
 }
- 
+
+.card-nome input::placeholder {
+  color: white;
+}
+
 .card-nome .btn-confirmar {
-  background: #007bff;
+  background: #FA21C5;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -94,9 +102,9 @@
   cursor: pointer;
   transition: background 0.3s ease;
 }
- 
+
 .card-nome .btn-confirmar:hover {
-  background: #0056b3;
+  background: #0BA0F4;
 }
 
 

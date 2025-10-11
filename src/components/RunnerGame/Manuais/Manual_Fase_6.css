@@ -1,0 +1,144 @@
+.manual-container {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.manual-card {
+    background: white;
+    color: #333;
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.manual-logo img {
+    width: 120px;
+    margin-bottom: 15px;
+}
+
+h2 {
+    color: #0ba0f4;
+    margin-bottom: 10px;
+}
+
+.intro {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.manual-section {
+    margin: 20px 0;
+}
+
+.manual-section h3 {
+    color: #fa21c5;
+    margin-bottom: 10px;
+}
+
+.char-list {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.char-list img {
+    width: 60px;
+    border-radius: 8px;
+    background: #f8f8f8;
+    padding: 5px;
+}
+
+.items-list {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+}
+
+.item img {
+    width: 50px;
+    margin-bottom: 5px;
+}
+
+.btn-start {
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: linear-gradient(45deg, #0ba0f4, #fa21c5);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-start:hover {
+    transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Desafio de frase */
+.sentence-challenge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.sentence {
+    font-size: 1.4rem;
+    color: #333;
+}
+
+.options {
+    display: flex;
+    gap: 20px;
+    font-size: 1.8rem;
+}
+
+.option {
+    font-weight: bold;
+    padding: 6px 14px;
+    border-radius: 10px;
+}
+
+.option.correct {
+    background-color: #d4f8d4;
+    color: #2d7a2d;
+}
+
+.option.wrong {
+    background-color: #f8d4d4;
+    color: #a52d2d;
+}

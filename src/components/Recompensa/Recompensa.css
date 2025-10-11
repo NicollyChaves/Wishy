@@ -1,0 +1,60 @@
+.recompensa-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.recompensa-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px 50px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+    animation: aparecer 0.8s ease;
+}
+
+.recompensa-card.ouro {
+    border: 5px solid gold;
+    background: linear-gradient(180deg, #fff8c2, #ffe066);
+}
+
+.recompensa-card.prata {
+    border: 5px solid silver;
+    background: linear-gradient(180deg, #e0e0e0, #bdbdbd);
+}
+
+.recompensa-card.bronze {
+    border: 5px solid #cd7f32;
+    background: linear-gradient(180deg, #f1c27d, #cd7f32);
+}
+
+.recompensa-imagem {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.recompensa-mensagem {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

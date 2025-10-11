@@ -10,6 +10,14 @@ import MenuFases from "../RunnerGame/Menu/MenuFases";
 
 // importar o manual da fase 1
 import ManualFase1 from "../RunnerGame/Manuais/Manual_Fase_1";
+import ManualFase2 from "../RunnerGame/Manuais/Manual_Fase_2";
+import ManualFase3 from "../RunnerGame/Manuais/Manual_Fase_3";
+import ManualFase4 from "../RunnerGame/Manuais/Manual_Fase_4";
+import ManualFase5 from "../RunnerGame/Manuais/Manual_Fase_5";
+import ManualFase6 from "../RunnerGame/Manuais/Manual_Fase_6";
+import ManualFase7 from "../RunnerGame/Manuais/Manual_Fase_7";
+
+
 
 export default function Game() {
   const [fase, setFase] = useState(0); // 0 = menu
@@ -48,6 +56,60 @@ export default function Game() {
         ) : (
           <Fase1 onNext={avancarFase} />
         ))}
+
+      {/* Fase 2 com manual */}
+      {fase === 2 &&
+        (mostrarManual ? (
+          <ManualFase2 onStart={() => setMostrarManual(false)} />
+        ) : (
+          <Fase2 onNext={avancarFase} />
+        ))
+      }
+
+      {/* Fase 3 com manual */}
+      {fase === 3 &&
+        (mostrarManual ? (
+          <ManualFase3 onStart={() => setMostrarManual(false)} />
+        ) : (
+          <Fase3 onNext={avancarFase} />
+        ))
+      }
+
+      {/* Fase 4 com manual */}
+      {fase === 4 &&
+        (mostrarManual ? (
+          <ManualFase4 onStart={() => setMostrarManual(false)} />
+        ) : (
+          <Fase4 onNext={avancarFase} />
+        ))
+      }
+
+      {/* Fase 5 com manual */}
+      {fase === 5 &&
+        (mostrarManual ? (
+          <ManualFase5 onStart={() => setMostrarManual(false)} />
+        ) : (
+          <Fase5 onNext={avancarFase} />
+        ))
+      }
+
+      {/* Fase 6 com manual */}
+      {fase === 6 &&
+        (mostrarManual ? (
+          <ManualFase6 onStart={() => setMostrarManual(false)} />
+        ) : (
+          <Fase6 onNext={avancarFase} />
+        ))
+      }
+
+      {/* Fase 7 com manual */}
+      {fase === 7 &&
+        (mostrarManual ? (
+          <ManualFase7 onStart={() => setMostrarManual(false)} />
+        ) : (
+          <Fase7 onNext={avancarFase} />
+        ))
+      }
 
       {fase === 2 && <Fase2 onNext={avancarFase} />}
       {fase === 3 && <Fase3 onNext={avancarFase} />}

@@ -1,203 +1,248 @@
-// src/components/RunnerGame/Fase7.jsx
+// src/components/RunnerGame/Fase_7.jsx
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_7.css";
-import bg1 from "../../../assets/imagens/runner/Plano_fundo_7.jpg";
+
+import bg1 from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
+import logo from "../../../assets/imagens/runner/Logo_2.png";
+
 import char1 from "../../../assets/imagens/runner/character1.gif";
 import char2 from "../../../assets/imagens/runner/character2.gif";
 import char3 from "../../../assets/imagens/runner/character3.gif";
 import char4 from "../../../assets/imagens/runner/character4.gif";
 import char5 from "../../../assets/imagens/runner/character5.gif";
-import logo from "../../../assets/imagens/runner/Logo_2.png";
 
-// Obstáculos que o personagem enfrentará
-const obstacles = [
-    { img: "🌲", type: "tree" },
-    { img: "🚧", type: "cone" },
-    { img: "🐍", type: "snake" },
-    { img: "🚗", type: "car" }
-];
+import tree from "../../../assets/imagens/runner/Cogumelo.png";
+import rock from "../../../assets/imagens/runner/Pedra.png";
+import star from "../../../assets/imagens/runner/Estrela.png";
+import heart from "../../../assets/imagens/runner/Coracao.png";
+
+import Credito from "../../creditos/Creditos";
+import BarraTempo from "../../BarraTempo/BarraTempo";
+import CardPontuacao from "../../CardPontuacao/CardPontuacao";
+import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
+import Feedback from "../../Feedback/Feedback";
+import Recompensa from "../../Recompensa/Recompensa";
 
 export default function Fase7({ onNext }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
-    const [position, setPosition] = useState("middle");
-    const [obstaclesInGame, setObstaclesInGame] = useState([]);
-    const [showSelector, setShowSelector] = useState(true);
+    const [positionY, setPositionY] = useState(0);
+    const [isJumping, setIsJumping] = useState(false);
+    const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
+    const [showSelector, setShowSelector] = useState(true);
+    const [timeLeft, setTimeLeft] = useState(60);
+    const [storyParts, setStoryParts] = useState([]);
+    const [currentPart, setCurrentPart] = useState(null);
+    const [showRecompensa, setShowRecompensa] = useState(false);
+    const [showFeedback, setShowFeedback] = useState(false);
 
-    const containerRef = useRef(null);
+    const spawnRef = useRef(null);
+    const timerRef = useRef(null);
 
-    // Inicia a fase
+    const personagens = [
+        { name: "Lulix", src: char1 },
+        { name: "Rafiki", src: char2 },
+        { name: "Nikko", src: char3 },
+        { name: "Pippli", src: char4 },
+        { name: "Zuppy", src: char5 },
+    ];
+
+    const phrases = [
+        { text: "Era uma vez", id: 1 },
+        { text: "um gato feliz", id: 2 },
+        { text: "que adorava brincar", id: 3 },
+        { text: "no parque!", id: 4 },
+    ];
+
+    const obstacles = [
+        { type: "tree", img: tree },
+        { type: "rock", img: rock },
+    ];
+
+    const bonuses = [
+        { type: "star", img: star, points: 15 },
+        { type: "heart", img: heart, points: 20 },
+    ];
+
     const handleStart = () => {
         if (running || !character) return;
         setRunning(true);
         setScore(0);
-        setObstaclesInGame([]);
+        setEntities([]);
+        setStoryParts([]);
+        setFinished(false);
+        setShowRecompensa(false);
+        setShowFeedback(false);
+        setCurrentPart(phrases[0]);
+        setTimeLeft(60);
 
-        // Gera obstáculos a cada 3 segundos
-        const spawn = setInterval(() => {
-            const randomObstacle = obstacles[Math.floor(Math.random() * obstacles.length)];
-            const newObstacle = { ...randomObstacle, xPos: 100 };
-            setObstaclesInGame((prev) => [...prev, newObstacle]);
-        }, 3000);
+        spawnRef.current = setInterval(() => {
+            const rand = Math.random();
+            if (rand < 0.4) {
+                const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+                setEntities((prev) => [
+                    ...prev,
+                    { id: Date.now() + Math.random(), type: "word", text: randomPhrase.text, phraseId: randomPhrase.id, x: 1000, y: 0 },
+                ]);
+            } else if (rand < 0.7) {
+                const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
+                setEntities((prev) => [
+                    ...prev,
+                    { id: Date.now() + Math.random(), type: obs.type, img: obs.img, x: 1000, y: 0 },
+                ]);
+            } else {
+                const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+                setEntities((prev) => [
+                    ...prev,
+                    { id: Date.now() + Math.random(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 },
+                ]);
+            }
+        }, 2500);
 
-        // Termina em 40 segundos
-        setTimeout(() => {
-            clearInterval(spawn);
-            setRunning(false);
-            setFinished(true);
-            onNext();
-        }, 40000);
+        timerRef.current = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current);
+                    clearInterval(spawnRef.current);
+                    setRunning(false);
+                    setFinished(true);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
     };
 
-    // Controle das setas
+    // Movimento dos elementos
     useEffect(() => {
-        const handleKey = (e) => {
-            if (!running) return;
-            if (e.key === "ArrowUp") setPosition("top");
-            if (e.key === "ArrowDown") setPosition("bottom");
-            if (e.key === "ArrowRight") setPosition("middle");
-        };
-        window.addEventListener("keydown", handleKey);
-        return () => window.removeEventListener("keydown", handleKey);
+        if (!running) return;
+        const loop = setInterval(() => {
+            setEntities((prev) => prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -150));
+        }, 30);
+        return () => clearInterval(loop);
     }, [running]);
 
-    // Mover obstáculos
+    // Colisões
     useEffect(() => {
-        if (!running || obstaclesInGame.length === 0) return;
-
-        const moveObstacles = setInterval(() => {
-            setObstaclesInGame((prev) =>
-                prev
-                    .map((obstacle) => ({
-                        ...obstacle,
-                        xPos: obstacle.xPos - 5
-                    }))
-                    .filter((obstacle) => obstacle.xPos > -50)
-            );
-        }, 30);
-
-        return () => clearInterval(moveObstacles);
-    }, [running, obstaclesInGame]);
-
-    // Colisão com obstáculos
-    useEffect(() => {
-        if (!running || obstaclesInGame.length === 0) return;
-
-        const interval = setInterval(() => {
-            obstaclesInGame.forEach((obstacle) => {
-                if (obstacle.xPos < 40 && obstacle.xPos > 10 && obstacle.type === position) {
-                    setScore((prev) => prev + 10);
-                    setObstaclesInGame((prev) => prev.filter((ob) => ob !== obstacle));
-                } else if (obstacle.xPos < 40 && obstacle.xPos > 10) {
-                    setScore((prev) => (prev > 0 ? prev - 5 : 0));
-                }
+        if (!running) return;
+        const check = setInterval(() => {
+            setEntities((prev) => {
+                const next = [];
+                prev.forEach((e) => {
+                    const collided = e.x < 220 && e.x > 50 && e.y < 100;
+                    if (collided) {
+                        if (e.type === "word") {
+                            setStoryParts((parts) => {
+                                if (!parts.find((p) => p.id === e.phraseId)) {
+                                    setScore((s) => s + 10);
+                                    return [...parts, e];
+                                }
+                                return parts;
+                            });
+                        } else if (e.type === "star" || e.type === "heart") {
+                            setScore((s) => s + (e.points || 10));
+                        } else {
+                            setScore((s) => Math.max(0, s - 10));
+                        }
+                    } else {
+                        next.push(e);
+                    }
+                });
+                return next;
             });
-        }, 2000);
+        }, 100);
+        return () => clearInterval(check);
+    }, [running]);
 
-        return () => clearInterval(interval);
-    }, [running, obstaclesInGame, position]);
+    const handleJump = () => {
+        if (!running || isJumping) return;
+        setIsJumping(true);
+        setPositionY(150);
+        setTimeout(() => setPositionY(0), 500);
+        setTimeout(() => setIsJumping(false), 800);
+    };
 
-    // Escolher personagem
-    const onCharacterChosen = (char) => {
+    useEffect(() => {
+        const key = (e) => e.key === "ArrowUp" && handleJump();
+        window.addEventListener("keydown", key);
+        window.addEventListener("touchstart", handleJump);
+        return () => {
+            window.removeEventListener("keydown", key);
+            window.removeEventListener("touchstart", handleJump);
+        };
+    });
+
+    useEffect(() => {
+        if (finished) {
+            setShowRecompensa(true);
+            const t = setTimeout(() => {
+                setShowRecompensa(false);
+                setShowFeedback(true);
+            }, 4000);
+            return () => clearTimeout(t);
+        }
+    }, [finished]);
+
+    const handleCharacterChoose = (char) => {
         setCharacter(char);
         setShowSelector(false);
     };
 
     return (
-        <div className="runner-main" onClick={handleStart} ref={containerRef}>
-            {/* Fundo fixo */}
+        <div className="runner-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg1})` }} />
+            <div className="logo-top"><img src={logo} alt="Logo" /></div>
 
-            {/* Logo fixa no topo direito */}
-            <div className="logo-top">
-                <img src={logo} alt="Logo Balão" />
-            </div>
-
-            {/* UI */}
             {!finished && (
                 <>
-                    <div className="ui-top">
-                        {running && <div className="btn reward-btn">⭐ Pontos: {score}</div>}
-                    </div>
-
-                    {/* Cartinha inicial (história) */}
-                    {!running && !showSelector && (
-                        <div className="story-card">
-                            <h2>🏁 Grande Corrida Final!</h2>
-                            <p>Você está na reta final! Apenas você pode vencer essa corrida. Prepare-se para desviar de obstáculos e conquistar a vitória!</p>
-                            <button onClick={handleStart}>Iniciar Corrida</button>
-                        </div>
+                    {running && (
+                        <>
+                            <CardPontuacao score={score} />
+                            <BarraTempo timeLeft={timeLeft} />
+                        </>
                     )}
 
-                    {/* Personagem */}
                     {character && (
-                        <div className={`character-wrap ${position}`}>
-                            <img
-                                src={character.src}
-                                alt={character.name}
-                                className={`character ${running ? "run" : "idle"}`}
-                            />
+                        <div
+                            className={`character-wrap ${isJumping ? "jumping" : ""}`}
+                            style={{ bottom: `${20 + positionY}px` }}
+                        >
+                            <img src={character.src} alt={character.name} className="character" />
                         </div>
                     )}
 
-                    {/* Obstáculos */}
                     {running &&
-                        obstaclesInGame.map((obstacle, index) => (
-                            <div
-                                key={index}
-                                className={`obstacle ${obstacle.type}`}
-                                style={{ left: `${obstacle.xPos}%` }}
-                            >
-                                {obstacle.img}
+                        entities.map((e) => (
+                            <div key={e.id} className={`entity ${e.type}`} style={{ left: `${e.x}px`, bottom: `${20 + e.y}px` }}>
+                                {e.type === "word" ? (
+                                    <span className="word-text">{e.text}</span>
+                                ) : (
+                                    <img src={e.img} alt={e.type} />
+                                )}
                             </div>
                         ))}
 
-                    {/* Modal de Seleção */}
+                    {!running && !showSelector && <div className="hint">Clique para começar a Corrida Final 🏁</div>}
+
                     {showSelector && (
-                        <div className="char-modal" onClick={() => setShowSelector(false)}>
-                            <div className="char-card" onClick={(e) => e.stopPropagation()}>
-                                <h2>Escolha seu personagem</h2>
-                                <div className="char-list">
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Luliz", src: char1 })}>
-                                        <img src={char1} alt="Luliz" />
-                                        <span>Luliz</span>
-                                    </button>
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Rafiki", src: char2 })}>
-                                        <img src={char2} alt="Rafiki" />
-                                        <span>Rafiki</span>
-                                    </button>
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Nikko", src: char3 })}>
-                                        <img src={char3} alt="Nikko" />
-                                        <span>Nikko</span>
-                                    </button>
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Pippli", src: char4 })}>
-                                        <img src={char4} alt="Pippli" />
-                                        <span>Pippli</span>
-                                    </button>
-                                    <button className="char-option" onClick={() => onCharacterChosen({ name: "Zuppy", src: char5 })}>
-                                        <img src={char5} alt="Zuppy" />
-                                        <span>Zuppy</span>
-                                    </button>
-                                </div>
-                                <button className="close" onClick={() => setShowSelector(false)}>Fechar</button>
-                            </div>
-                        </div>
+                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} onClose={() => setShowSelector(false)} />
                     )}
                 </>
             )}
 
-            {/* Feedback Final */}
-            {finished && (
-                <div className="end-modal">
-                    <div className="end-card">
-                        <h2>🎉 Parabéns!</h2>
-                        <p>Você concluiu a corrida final com {score} pontos!</p>
-                        <button onClick={() => window.location.reload()}>Próxima Fase</button>
-                    </div>
+            {showRecompensa && <Recompensa pontuacao={score} />}
+            {showFeedback && <Feedback pontuacao={score} onNext={onNext} />}
+
+            {finished && storyParts.length > 0 && (
+                <div className="story-popup">
+                    <h3>📜 Sua cartinha final:</h3>
+                    <p>{storyParts.map((p) => p.text).join(" ")}</p>
                 </div>
             )}
+
+            <Credito />
         </div>
     );
 }

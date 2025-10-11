@@ -1,180 +1,287 @@
-// src/components/RunnerGame/Fase3.jsx
+// src/components/RunnerGame/Fases/Fase_3.jsx
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_3.css";
 
-import bg1 from "../../../assets/imagens/runner/Plano_fundo_3.jpg";
+import bg3 from "../../../assets/imagens/runner/Plano_fundo_3.jpg";
+import logo from "../../../assets/imagens/runner/Logo_2.png";
+
 import char1 from "../../../assets/imagens/runner/character1.gif";
 import char2 from "../../../assets/imagens/runner/character2.gif";
 import char3 from "../../../assets/imagens/runner/character3.gif";
 import char4 from "../../../assets/imagens/runner/character4.gif";
 import char5 from "../../../assets/imagens/runner/character5.gif";
-import logo from "../../../assets/imagens/runner/Logo_2.png";
 
-const letterSounds = [
-    { sound: "Bê", correct: "B" },
-    { sound: "Dê", correct: "D" },
-    { sound: "Mê", correct: "M" },
-    { sound: "Fê", correct: "F" },
-    { sound: "Pê", correct: "P" },
-    { sound: "Tê", correct: "T" },
-    { sound: "Lê", correct: "L" },
+import tree from "../../../assets/imagens/runner/Cogumelo.png";
+import rock from "../../../assets/imagens/runner/Pedra.png";
+import star from "../../../assets/imagens/runner/Estrela.png";
+import heart from "../../../assets/imagens/runner/Coracao.png";
+
+import Credito from "../../creditos/Creditos";
+import BarraTempo from "../../BarraTempo/BarraTempo";
+import CardPontuacao from "../../CardPontuacao/CardPontuacao";
+import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
+import Feedback from "../../Feedback/Feedback";
+import Recompensa from "../../Recompensa/Recompensa";
+
+// Sons (coloque seus arquivos em src/assets/sounds)
+import somBola from "../../../assets/sounds/Bola.mp3";
+import somFoca from "../../../assets/sounds/Foca.mp3";
+import somLata from "../../../assets/sounds/Lata.mp3";
+import somGalo from "../../../assets/sounds/Galo.mp3";
+
+const palavras = [
+    { som: somBola, letraCorreta: "B" },
+    { som: somFoca, letraCorreta: "F" },
+    { som: somLata, letraCorreta: "L" },
+    { som: somGalo, letraCorreta: "G" },
+];
+
+const obstacles = [
+    { type: "tree", img: tree },
+    { type: "rock", img: rock },
+];
+
+const bonuses = [
+    { type: "star", img: star, points: 15 },
+    { type: "heart", img: heart, points: 20 },
 ];
 
 export default function Fase3({ onNext }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
-    const [currentSound, setCurrentSound] = useState(null);
-    const [letters, setLetters] = useState([]);
-    const [position, setPosition] = useState("middle");
-    const [showSelector, setShowSelector] = useState(true);
+    const [positionY, setPositionY] = useState(0);
+    const [isJumping, setIsJumping] = useState(false);
+    const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
+    const [showSelector, setShowSelector] = useState(true);
+    const [timeLeft, setTimeLeft] = useState(90);
+    const [letraCorreta, setLetraCorreta] = useState("");
+    const [showRecompensa, setShowRecompensa] = useState(false);
+    const [showFeedback, setShowFeedback] = useState(false);
+    const [somAtual, setSomAtual] = useState(null);
 
-    const containerRef = useRef(null);
+    const spawnRef = useRef(null);
+    const timerRef = useRef(null);
+    const somAtualRef = useRef(null);
+
+    const personagens = [
+        { name: "Lulix", src: char1 },
+        { name: "Rafiki", src: char2 },
+        { name: "Nikko", src: char3 },
+        { name: "Pippli", src: char4 },
+        { name: "Zuppy", src: char5 },
+    ];
+
+    // 🔊 Tocar som com segurança
+    const tocarSom = (src) => {
+        if (somAtualRef.current) {
+            somAtualRef.current.pause();
+        }
+        const audio = new Audio(src);
+        somAtualRef.current = audio;
+        audio.play().catch(() => {
+            console.log("Usuário precisa clicar para permitir o som 🎧");
+        });
+        setSomAtual(src);
+    };
+
+    // Sorteia um novo som e letra
+    const tocarSomAleatorio = () => {
+        const p = palavras[Math.floor(Math.random() * palavras.length)];
+        setLetraCorreta(p.letraCorreta);
+        tocarSom(p.som);
+    };
 
     const handleStart = () => {
         if (running || !character) return;
         setRunning(true);
         setScore(0);
+        setEntities([]);
+        setTimeLeft(90);
+        setFinished(false);
+        setShowRecompensa(false);
+        setShowFeedback(false);
 
-        const spawn = setInterval(() => {
-            const random = letterSounds[Math.floor(Math.random() * letterSounds.length)];
-            setCurrentSound(random);
+        tocarSomAleatorio();
 
-            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-            const randomLetters = alphabet
-                .filter((l) => l !== random.correct)
-                .sort(() => 0.5 - Math.random())
-                .slice(0, 2);
+        // Gera entidades
+        spawnRef.current = setInterval(() => {
+            const rand = Math.random();
+            if (rand < 0.5) {
+                const letras = ["A", "B", "C", "D", "E", "F", "G", "L"];
+                const letra = letras[Math.floor(Math.random() * letras.length)];
+                setEntities((prev) => [
+                    ...prev,
+                    { id: Date.now() + Math.random(), type: "letter", char: letra, x: 1000, y: 0 },
+                ]);
+            } else if (rand < 0.75) {
+                const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
+                setEntities((prev) => [
+                    ...prev,
+                    { id: Date.now() + Math.random(), type: obs.type, img: obs.img, x: 1000, y: 0 },
+                ]);
+            } else {
+                const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+                setEntities((prev) => [
+                    ...prev,
+                    { id: Date.now() + Math.random(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 },
+                ]);
+            }
+        }, 2300);
 
-            const allLetters = [...randomLetters, random.correct].sort(() => 0.5 - Math.random());
+        // Contagem regressiva
+        timerRef.current = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current);
+                    clearInterval(spawnRef.current);
+                    setRunning(false);
+                    setFinished(true);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+    };
 
-            setLetters(
-                allLetters.map((ltr, i) => ({
-                    char: ltr,
-                    lane: i === 0 ? "top" : i === 1 ? "middle" : "bottom",
-                }))
+    // Movimento das entidades
+    useEffect(() => {
+        if (!running) return;
+        const loop = setInterval(() => {
+            setEntities((prev) =>
+                prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -120)
             );
-        }, 6000);
+        }, 30);
+        return () => clearInterval(loop);
+    }, [running]);
 
-        setTimeout(() => {
-            clearInterval(spawn);
-            setRunning(false);
-            setFinished(true);
-        }, 40000);
+    // Detecção de colisões
+    useEffect(() => {
+        if (!running) return;
+        const check = setInterval(() => {
+            setEntities((prev) => {
+                const next = [];
+                prev.forEach((e) => {
+                    const charWidth = 120;
+                    const entW = e.type === "letter" ? 60 : 80;
+                    const collided =
+                        e.x < 200 + charWidth &&
+                        e.x + entW > 200 &&
+                        e.y < positionY + 120 &&
+                        e.y + 60 > positionY;
+
+                    if (collided) {
+                        if (e.type === "letter") {
+                            if (e.char === letraCorreta) {
+                                setScore((s) => s + 10);
+                                tocarSomAleatorio(); // toca próximo som
+                            } else {
+                                setScore((s) => Math.max(0, s - 5));
+                            }
+                        } else if (e.type === "star" || e.type === "heart") {
+                            setScore((s) => s + (e.points || 10));
+                        } else {
+                            setScore((s) => Math.max(0, s - 10));
+                        }
+                    } else {
+                        next.push(e);
+                    }
+                });
+                return next;
+            });
+        }, 100);
+        return () => clearInterval(check);
+    }, [running, positionY, letraCorreta]);
+
+    // Pular
+    const handleJump = () => {
+        if (!running || isJumping) return;
+        setIsJumping(true);
+        setPositionY(150);
+        setTimeout(() => setPositionY(0), 500);
+        setTimeout(() => setIsJumping(false), 800);
     };
 
     useEffect(() => {
-        const handleKey = (e) => {
-            if (!running) return;
-            if (e.key === "ArrowUp") setPosition("top");
-            if (e.key === "ArrowDown") setPosition("bottom");
-            if (e.key === "ArrowRight") setPosition("middle");
+        const key = (e) => e.key === "ArrowUp" && handleJump();
+        window.addEventListener("keydown", key);
+        window.addEventListener("touchstart", handleJump);
+        return () => {
+            window.removeEventListener("keydown", key);
+            window.removeEventListener("touchstart", handleJump);
         };
-        window.addEventListener("keydown", handleKey);
-        return () => window.removeEventListener("keydown", handleKey);
-    }, [running]);
+    });
 
+    // Finalização
     useEffect(() => {
-        if (!running || letters.length === 0 || !currentSound) return;
+        if (finished) {
+            setShowRecompensa(true);
+            const t = setTimeout(() => {
+                setShowRecompensa(false);
+                setShowFeedback(true);
+            }, 4000);
+            return () => clearTimeout(t);
+        }
+    }, [finished]);
 
-        const interval = setInterval(() => {
-            letters.forEach((ltr) => {
-                if (ltr.lane === position) {
-                    if (ltr.char === currentSound.correct) {
-                        setScore((prev) => prev + 10);
-                    } else {
-                        setScore((prev) => (prev > 0 ? prev - 5 : 0));
-                    }
-                    setLetters([]);
-                }
-            });
-        }, 2000);
-
-        return () => clearInterval(interval);
-    }, [letters, position, currentSound, running]);
-
-    const onCharacterChosen = (char) => {
+    const handleCharacterChoose = (char) => {
         setCharacter(char);
         setShowSelector(false);
     };
 
-    return (
-        <div className="runner-main" onClick={handleStart} ref={containerRef}>
-            <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg1})` }} />
+    // 🔊 Botão "Ouvir Som Novamente"
+    const handleRepetirSom = () => {
+        if (somAtual) tocarSom(somAtual);
+    };
 
-            {/* Logo fixa no topo direito */}
-            <div className="logo-top">
-                <img src={logo} alt="Logo Balão" />
-            </div>
+    return (
+        <div className="runner-main" onClick={handleStart}>
+            <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg3})` }} />
+            <div className="logo-top"><img src={logo} alt="Logo" /></div>
 
             {!finished && (
                 <>
-                    <div className="ui-top">
-                        {running && <div className="btn reward-btn">⭐ Pontos: {score}</div>}
-                    </div>
-
-                    {running && currentSound && (
-                        <div className="current-word">
-                            Som de: <strong>{currentSound.sound}</strong>
-                        </div>
+                    {running && (
+                        <>
+                            <CardPontuacao score={score} />
+                            <BarraTempo timeLeft={timeLeft} />
+                            <div className="letra-indicada">
+                                <button className="btn-repetir" onClick={handleRepetirSom}>
+                                    🔊 Ouvir Som
+                                </button>
+                            </div>
+                        </>
                     )}
 
                     {character && (
-                        <div className={`character-wrap ${position}`}>
-                            <img
-                                src={character.src}
-                                alt={character.name}
-                                className={`character ${running ? "run" : "idle"}`}
-                            />
+                        <div
+                            className={`character-wrap ${isJumping ? "jumping" : ""}`}
+                            style={{ left: `200px`, bottom: `${20 + positionY}px` }}
+                        >
+                            <img src={character.src} alt={character.name} className="character" />
                         </div>
                     )}
 
                     {running &&
-                        letters.map((ltr, i) => (
-                            <div key={i} className={`letter ${ltr.lane}`}>
-                                {ltr.char}
+                        entities.map((e) => (
+                            <div key={e.id} className={`entity ${e.type}`} style={{ left: `${e.x}px`, bottom: `${20 + e.y}px` }}>
+                                {e.type === "letter" ? <span className="letter-char">{e.char}</span> : <img src={e.img} alt={e.type} />}
                             </div>
                         ))}
 
-                    {!running && !showSelector && (
-                        <div className="hint">Clique para começar a Fase 3</div>
-                    )}
+                    {!running && !showSelector && <div className="hint">Clique para começar a Fase 3</div>}
 
                     {showSelector && (
-                        <div className="char-modal" onClick={() => setShowSelector(false)}>
-                            <div className="char-card" onClick={(e) => e.stopPropagation()}>
-                                <h2>Escolha seu personagem</h2>
-                                <div className="char-list">
-                                    {[char1, char2, char3, char4, char5].map((char, idx) => (
-                                        <button
-                                            key={idx}
-                                            className="char-option"
-                                            onClick={() => onCharacterChosen({ name: `Char${idx + 1}`, src: char })}
-                                        >
-                                            <img src={char} alt={`Char${idx + 1}`} />
-                                            <span> {idx + 1}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                                <button className="close" onClick={() => setShowSelector(false)}>
-                                    Fechar
-                                </button>
-                            </div>
-                        </div>
+                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} />
                     )}
                 </>
             )}
 
-            {finished && (
-                <div className="end-modal">
-                    <div className="end-card">
-                        <h2>🎉 Parabéns!</h2>
-                        <p>Você concluiu a fase com {score} pontos!</p>
-                        <button onClick={onNext}>Próxima Fase</button>
-                    </div>
-                </div>
-            )}
+            {showRecompensa && <Recompensa pontuacao={score} />}
+            {showFeedback && <Feedback pontuacao={score} onNext={onNext} />}
+
+            <Credito />
         </div>
     );
 }
