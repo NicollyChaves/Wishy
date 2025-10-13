@@ -3,8 +3,72 @@
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    background: linear-gradient(#fceabb, #f8b500);
+    background: linear-gradient(#87CEEB, #bfe9ff);
     cursor: pointer;
+}
+
+/* 🔥 Flash verde/vermelho */
+.flash-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    opacity: 0.6;
+    animation: flashFade 0.4s ease-out forwards;
+}
+
+.flash-overlay.green {
+    background: rgba(0, 255, 0, 0.4);
+}
+
+.flash-overlay.red {
+    background: rgba(255, 0, 0, 0.4);
+}
+
+@keyframes flashFade {
+    from {
+        opacity: 0.6;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* 💫 Score flutuante */
+.floating-score {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 0);
+    font-size: 2rem;
+    font-weight: bold;
+    animation: floatUp 1s ease-out forwards;
+    z-index: 120;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.floating-score.green {
+    color: #00ff66;
+}
+
+.floating-score.red {
+    color: #ff3333;
+}
+
+.floating-score.yellow {
+    color: #ffea00;
+}
+
+@keyframes floatUp {
+    from {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate(-50%, -100px);
+    }
 }
 
 .bg-layer.fixed {

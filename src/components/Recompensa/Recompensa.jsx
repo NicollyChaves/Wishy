@@ -3,21 +3,21 @@ import Confetti from "react-confetti";
 import "./Recompensa.css";
 
 import medalhaOuro from "../../assets/imagens/runner/Medalha_Ouro.png";
-import medalhaPrata from "../../assets/imagens/runner/Medalha_Ouro.png";
-import medalhaBronze from "../../assets/imagens/runner/Medalha_Ouro.png";
+import medalhaPrata from "../../assets/imagens/runner/Medalha_Prata.png";
+import medalhaBronze from "../../assets/imagens/runner/Medalha_Bronze.png";
 
 const Recompensa = ({ pontuacao, onRecompensaFinalizada }) => {
     const [recompensa, setRecompensa] = useState(null);
     const [mostrarConfete, setMostrarConfete] = useState(false);
 
     useEffect(() => {
-        if (pontuacao >= 80) {
+        if (pontuacao >= 300) {
             setRecompensa({
                 tipo: "ouro",
                 imagem: medalhaOuro,
                 mensagem: "🏆 Incrível! Você conquistou a Medalha de Ouro!",
             });
-        } else if (pontuacao >= 60) {
+        } else if (pontuacao >= 250) {
             setRecompensa({
                 tipo: "prata",
                 imagem: medalhaPrata,

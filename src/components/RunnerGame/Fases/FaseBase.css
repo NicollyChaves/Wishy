@@ -1,3 +1,5 @@
+/* 🌈 Estilos base reutilizáveis para todas as fases */
+
 .runner-main {
     position: relative;
     width: 100%;
@@ -7,71 +9,7 @@
     cursor: pointer;
 }
 
-/* 🔥 Flash verde/vermelho */
-.flash-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 100;
-    opacity: 0.6;
-    animation: flashFade 0.4s ease-out forwards;
-}
-
-.flash-overlay.green {
-    background: rgba(0, 255, 0, 0.4);
-}
-
-.flash-overlay.red {
-    background: rgba(255, 0, 0, 0.4);
-}
-
-@keyframes flashFade {
-    from {
-        opacity: 0.6;
-    }
-
-    to {
-        opacity: 0;
-    }
-}
-
-/* 💫 Score flutuante */
-.floating-score {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, 0);
-    font-size: 2rem;
-    font-weight: bold;
-    animation: floatUp 1s ease-out forwards;
-    z-index: 120;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.floating-score.green {
-    color: #00ff66;
-}
-
-.floating-score.red {
-    color: #ff3333;
-}
-
-.floating-score.yellow {
-    color: #ffea00;
-}
-
-@keyframes floatUp {
-    from {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
-
-    to {
-        opacity: 0;
-        transform: translate(-50%, -100px);
-    }
-}
-
-
+/* 🎨 Fundo do cenário */
 .bg-layer.fixed {
     position: absolute;
     inset: 0;
@@ -80,6 +18,7 @@
     z-index: 1;
 }
 
+/* 🌟 Logo */
 .logo-top {
     position: absolute;
     top: 10px;
@@ -92,19 +31,23 @@
     height: auto;
 }
 
+/* 💬 Emoji ou palavra exibida */
 .emoji-display {
     position: absolute;
     top: 50px;
     left: 50%;
+    transform: translateX(-50%);
     background: #FA21C5;
     border-radius: 14px;
     padding: 6px 14px;
     font-size: 30px;
     font-weight: bold;
+    color: white;
     z-index: 30;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
+/* 🧍‍♂️ Personagem */
 .character-wrap {
     position: absolute;
     left: 100px;
@@ -121,14 +64,7 @@
     transform: translateY(-20px);
 }
 
-.character.idle {
-    animation: bob 1.2s ease-in-out infinite;
-}
-
-.character.run {
-    animation: run-bobbing 0.4s steps(2) infinite;
-}
-
+/* 🌀 Animações de movimento */
 @keyframes bob {
 
     0%,
@@ -153,6 +89,7 @@
     }
 }
 
+/* 🌳 Entidades (letras, obstáculos, corações, estrelas) */
 .entity {
     position: absolute;
     font-size: 60px !important;
@@ -160,6 +97,7 @@
     color: white !important;
     text-shadow: 2px 2px 8px black;
     z-index: 12;
+    transition: transform 0.2s ease;
 }
 
 .entity img {
@@ -167,6 +105,7 @@
     height: auto;
 }
 
+/* 💬 Mensagem de dica antes de começar */
 .hint {
     position: absolute;
     left: 50%;
@@ -177,8 +116,22 @@
     padding: 8px 16px;
     border-radius: 10px;
     font-weight: bold;
+    animation: pulse 1.5s infinite;
 }
 
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* 🏁 Tela final (recompensa ou feedback) */
 .end-modal {
     position: fixed;
     inset: 0;
@@ -212,4 +165,73 @@
     color: white;
     font-weight: bold;
     cursor: pointer;
+    transition: background 0.2s;
+}
+
+.end-card button:hover {
+    background: #097dc9;
+}
+
+/* 💥 Flash verde e vermelho para acerto/erro */
+.flash {
+    position: fixed;
+    inset: 0;
+    opacity: 0;
+    z-index: 999;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
+}
+
+.flash-green {
+    background: rgba(0, 255, 0, 0.4);
+    animation: flashGreen 0.3s ease-out;
+}
+
+.flash-red {
+    background: rgba(255, 0, 0, 0.4);
+    animation: flashRed 0.3s ease-out;
+}
+
+@keyframes flashGreen {
+    0% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes flashRed {
+    0% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* ✨ Pontuação flutuante (ao acertar ou errar) */
+.score-float {
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    text-shadow: 2px 2px 6px black;
+    animation: floatUp 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 200;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-60px);
+    }
 }

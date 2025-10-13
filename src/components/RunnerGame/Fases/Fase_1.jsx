@@ -55,9 +55,13 @@ export default function Fase1({ onNext }) {
   const [showRecompensa, setShowRecompensa] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
 
+  // ✨ Novos estados para o flash e score flutuante
+  const [flashColor, setFlashColor] = useState("");
+  const [floatingScores, setFloatingScores] = useState([]);
+
   const spawnRef = useRef(null);
   const timerRef = useRef(null);
-  const emojiTimerRef = useRef(null); // 🕐 controla troca automática do emoji
+  const emojiTimerRef = useRef(null);
 
   const personagens = [
     { name: "Lulix", src: char1 },
@@ -116,7 +120,6 @@ export default function Fase1({ onNext }) {
     }, 1000);
   };
 
-  // 🚀 Troca o emoji automaticamente a cada 30 segundos
   useEffect(() => {
     if (running) {
       emojiTimerRef.current = setInterval(() => {
@@ -126,7 +129,6 @@ export default function Fase1({ onNext }) {
     return () => clearInterval(emojiTimerRef.current);
   }, [running]);
 
-  // 💥 Movimento dos elementos na tela
   useEffect(() => {
     if (!running) return;
     const loop = setInterval(() => {
@@ -136,7 +138,7 @@ export default function Fase1({ onNext }) {
     return () => clearInterval(loop);
   }, [running]);
 
-  // 🎯 Colisões
+  // 🎯 Colisões + Flash colorido + Score flutuante
   useEffect(() => {
     if (!running) return;
     const check = setInterval(() => {
@@ -152,18 +154,30 @@ export default function Fase1({ onNext }) {
             e.x + entW > charPosX &&
             e.y < positionY + charHeight &&
             e.y + entH > positionY;
+
           if (collided) {
             if (e.type === "letter") {
               if (currentWord && e.char === currentWord.correct) {
                 setScore((s) => s + 10);
+                setFlashColor("green");
+                addFloatingScore("+10", "green");
               } else {
                 setScore((s) => Math.max(0, s - 5));
+                setFlashColor("red");
+                addFloatingScore("-5", "red");
               }
             } else if (e.type === "star" || e.type === "heart") {
               setScore((s) => s + (e.points || 10));
+              setFlashColor("green");
+              addFloatingScore(`+${e.points}`, "yellow");
             } else {
               setScore((s) => Math.max(0, s - 10));
+              setFlashColor("red");
+              addFloatingScore("-10", "red");
             }
+
+            // Reseta o flash depois de 300ms
+            setTimeout(() => setFlashColor(""), 300);
           } else {
             next.push(e);
           }
@@ -174,12 +188,20 @@ export default function Fase1({ onNext }) {
     return () => clearInterval(check);
   }, [running, positionY, charPosX, currentWord]);
 
-  // 🪄 Pulo com animação suave (sem gravidade)
+  // 🪄 Adiciona pontuação flutuante
+  const addFloatingScore = (text, color) => {
+    const id = Date.now();
+    setFloatingScores((prev) => [...prev, { id, text, color }]);
+    setTimeout(() => {
+      setFloatingScores((prev) => prev.filter((f) => f.id !== id));
+    }, 1000);
+  };
+
   const handleJump = () => {
     if (!running || isJumping) return;
     setIsJumping(true);
-    setPositionY(150); // sobe
-    setTimeout(() => setPositionY(0), 500); // volta ao chão em 0.5s
+    setPositionY(150);
+    setTimeout(() => setPositionY(0), 500);
     setTimeout(() => setIsJumping(false), 800);
   };
 
@@ -193,7 +215,6 @@ export default function Fase1({ onNext }) {
     };
   });
 
-  // 🎁 Mostra Recompensa e depois Feedback
   useEffect(() => {
     if (finished) {
       setShowRecompensa(true);
@@ -213,6 +234,17 @@ export default function Fase1({ onNext }) {
   return (
     <div className="runner-main" onClick={handleStart}>
       <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg1})` }} />
+
+      {/* 🔥 Flash colorido */}
+      {flashColor && <div className={`flash-overlay ${flashColor}`} />}
+
+      {/* 💫 Scores flutuantes */}
+      {floatingScores.map((f) => (
+        <div key={f.id} className={`floating-score ${f.color}`}>
+          {f.text}
+        </div>
+      ))}
+
       <div className="logo-top"><img src={logo} alt="Logo" /></div>
 
       {!finished && (
