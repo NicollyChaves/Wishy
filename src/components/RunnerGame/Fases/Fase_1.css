@@ -96,7 +96,7 @@
     position: absolute;
     top: 50px;
     left: 50%;
-    background: #FA21C5;
+    background: #FA21C5 !important;
     border-radius: 14px;
     padding: 6px 14px;
     font-size: 30px;

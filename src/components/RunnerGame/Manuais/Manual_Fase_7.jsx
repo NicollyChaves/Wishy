@@ -23,7 +23,7 @@ export default function Manual_Fase_7({ onStart }) {
                     <img src={logo} alt="Logo Jogo" />
                 </div>
 
-                <h2>📖 Manual da Fase 7 — A Grande Corrida Final 🏁</h2>
+                <h2>📖 Manual da Fase 7</h2>
                 <p className="intro">
                     Chegamos ao grande final! Nesta fase, você vai usar tudo o que aprendeu
                     nas aventuras anteriores para formar uma história mágica! 🌈✨

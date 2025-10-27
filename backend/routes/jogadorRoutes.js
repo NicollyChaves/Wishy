@@ -1,9 +1,11 @@
+// backend/routes/jogadorRoutes.js
 import express from "express";
-import { listarJogadores, adicionarJogador } from "../controllers/jogadorController.js";
+import { registrarJogador, salvarPontuacao, rankingTop10 } from "../controllers/jogadorController.js";
 
 const router = express.Router();
 
-router.get("/ranking", listarJogadores);
-router.post("/add", adicionarJogador);
+router.post("/registrar", registrarJogador); // cria o jogador com o nome
+router.post("/pontuacao", salvarPontuacao); // atualiza pontuação das fases
+router.get("/ranking", rankingTop10); // retorna o top 10 geral
 
 export default router;

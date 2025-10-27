@@ -1,15 +1,14 @@
-// src/components/RunnerGame/Fases/Fase_4.jsx
+// src/components/RunnerGame/Fase_Oculta.jsx
 import React, { useState, useEffect, useRef } from "react";
-import "./Fase_4.css";
+import "./Fase_Oculta.css";
 
-import bg4 from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
-import logo from "../../../assets/imagens/runner/Logo_2.png";
-
+import bgForest from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
 import char1 from "../../../assets/imagens/runner/character1.gif";
 import char2 from "../../../assets/imagens/runner/character2.gif";
 import char3 from "../../../assets/imagens/runner/character3.gif";
 import char4 from "../../../assets/imagens/runner/character4.gif";
 import char5 from "../../../assets/imagens/runner/character5.gif";
+import logo from "../../../assets/imagens/runner/Logo_2.png";
 
 import tree from "../../../assets/imagens/runner/Cogumelo.png";
 import rock from "../../../assets/imagens/runner/Pedra.png";
@@ -23,38 +22,12 @@ import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 
-// 👇 Cenas do cotidiano
-const cenas = [
-    {
-        emoji: "🏫",
-        frase: "Ir para a escola",
-        correta: "Escola",
-        opcoes: ["Escola", "Cama", "Bola", "Chuva"],
-    },
-    {
-        emoji: "🍽",
-        frase: "Hora do almoço",
-        correta: "Almoço",
-        opcoes: ["Almoço", "Mochila", "Sol", "Mesa"],
-    },
-    {
-        emoji: "🌧",
-        frase: "Dia de chuva",
-        correta: "Guarda-chuva",
-        opcoes: ["Mesa", "Guarda-chuva", "Sapato", "Peixe"],
-    },
-    {
-        emoji: "🛏",
-        frase: "Hora de dormir",
-        correta: "Cama",
-        opcoes: ["Flor", "Cama", "Escola", "Copo"],
-    },
-    {
-        emoji: "🚴‍♀️",
-        frase: "Brincar com os amigos",
-        correta: "Bicicleta",
-        opcoes: ["Cadeira", "Pão", "Bicicleta", "Janela"],
-    },
+const creatures = [
+    { img: "🧚‍♀️", name: "Fada" },
+    { img: "🦄", name: "Unicórnio" },
+    { img: "🐿️", name: "Esquilo" },
+    { img: "🦋", name: "Borboleta" },
+    { img: "🍄", name: "Cogumelo" },
 ];
 
 const obstacles = [
@@ -63,11 +36,11 @@ const obstacles = [
 ];
 
 const bonuses = [
-    { type: "star", img: star, points: 15 },
-    { type: "heart", img: heart, points: 20 },
+    { type: "star", img: star, points: 20 },
+    { type: "heart", img: heart, points: 25 },
 ];
 
-export default function Fase4({ onNext }) {
+export default function FaseOculta({ onNext, userId }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
@@ -76,13 +49,17 @@ export default function Fase4({ onNext }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(90);
-    const [cenaAtual, setCenaAtual] = useState(cenas[0]);
+    const [timeLeft, setTimeLeft] = useState(100);
+    const [currentCreature, setCurrentCreature] = useState(creatures[0]);
+    const [charPosX, setCharPosX] = useState(100);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
+    const [flashColor, setFlashColor] = useState("");
+    const [floatingScores, setFloatingScores] = useState([]);
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
+    const emojiTimerRef = useRef(null);
 
     const personagens = [
         { name: "Lulix", src: char1 },
@@ -97,25 +74,23 @@ export default function Fase4({ onNext }) {
         setRunning(true);
         setScore(0);
         setEntities([]);
-        setTimeLeft(90);
+        setTimeLeft(100);
         setFinished(false);
         setShowRecompensa(false);
         setShowFeedback(false);
-        setCenaAtual(cenas[Math.floor(Math.random() * cenas.length)]);
+        setCurrentCreature(creatures[Math.floor(Math.random() * creatures.length)]);
+        setCharPosX(100);
 
+        // 🌿 Spawner de criaturas, bônus e obstáculos
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
-            if (rand < 0.5) {
-                // palavras (as opções da cena atual)
-                const palavra =
-                    cenaAtual.opcoes[
-                    Math.floor(Math.random() * cenaAtual.opcoes.length)
-                    ];
+            if (rand < 0.4) {
+                const random = creatures[Math.floor(Math.random() * creatures.length)];
                 setEntities((prev) => [
                     ...prev,
-                    { id: Date.now() + Math.random(), type: "word", text: palavra, x: 1000, y: 0 },
+                    { id: Date.now() + Math.random(), type: "creature", char: random.img, x: 1000, y: 0 },
                 ]);
-            } else if (rand < 0.75) {
+            } else if (rand < 0.7) {
                 const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
                 setEntities((prev) => [
                     ...prev,
@@ -128,8 +103,9 @@ export default function Fase4({ onNext }) {
                     { id: Date.now() + Math.random(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 },
                 ]);
             }
-        }, 2500);
+        }, 2000);
 
+        // 🕓 Timer do tempo da fase
         timerRef.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
@@ -145,10 +121,20 @@ export default function Fase4({ onNext }) {
     };
 
     useEffect(() => {
+        if (running) {
+            emojiTimerRef.current = setInterval(() => {
+                setCurrentCreature(creatures[Math.floor(Math.random() * creatures.length)]);
+            }, 20000);
+        }
+        return () => clearInterval(emojiTimerRef.current);
+    }, [running]);
+
+    useEffect(() => {
         if (!running) return;
         const loop = setInterval(() => {
+            setCharPosX((x) => Math.min(x + 0.6, 350));
             setEntities((prev) =>
-                prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -150)
+                prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -120)
             );
         }, 30);
         return () => clearInterval(loop);
@@ -160,20 +146,37 @@ export default function Fase4({ onNext }) {
             setEntities((prev) => {
                 const next = [];
                 prev.forEach((e) => {
-                    const collided = e.x < 250 && e.x > 150 && positionY < 80;
+                    const charWidth = 120;
+                    const charHeight = 120;
+                    const entW = e.type === "creature" ? 60 : 80;
+                    const entH = e.type === "creature" ? 60 : 80;
+                    const collided =
+                        e.x < charPosX + charWidth &&
+                        e.x + entW > charPosX &&
+                        e.y < positionY + charHeight &&
+                        e.y + entH > positionY;
+
                     if (collided) {
-                        if (e.type === "word") {
-                            if (e.text === cenaAtual.correta) {
-                                setScore((s) => s + 15);
-                                setCenaAtual(cenas[Math.floor(Math.random() * cenas.length)]);
-                            } else {
-                                setScore((s) => Math.max(0, s - 5));
-                            }
-                        } else if (e.type === "star" || e.type === "heart") {
-                            setScore((s) => s + (e.points || 10));
-                        } else {
-                            setScore((s) => Math.max(0, s - 10));
+                        // ✅ Correto
+                        if (e.type === "creature") {
+                            setScore((s) => s + 15);
+                            setFlashColor("green");
+                            addFloatingScore("+15", "green");
                         }
+                        // 🌟 Bônus
+                        else if (e.type === "star" || e.type === "heart") {
+                            setScore((s) => s + (e.points || 10));
+                            setFlashColor("green");
+                            addFloatingScore(`+${e.points}`, "yellow");
+                        }
+                        // ❌ Erro
+                        else {
+                            setScore((s) => Math.max(0, s - 5));
+                            setFlashColor("red");
+                            addFloatingScore("-5", "red");
+                        }
+
+                        setTimeout(() => setFlashColor(""), 300);
                     } else {
                         next.push(e);
                     }
@@ -182,7 +185,16 @@ export default function Fase4({ onNext }) {
             });
         }, 100);
         return () => clearInterval(check);
-    }, [running, positionY, cenaAtual]);
+    }, [running, positionY, charPosX, currentCreature]);
+
+    // ✨ Score flutuante
+    const addFloatingScore = (text, color) => {
+        const id = Date.now();
+        setFloatingScores((prev) => [...prev, { id, text, color }]);
+        setTimeout(() => {
+            setFloatingScores((prev) => prev.filter((f) => f.id !== id));
+        }, 1000);
+    };
 
     const handleJump = () => {
         if (!running || isJumping) return;
@@ -192,6 +204,7 @@ export default function Fase4({ onNext }) {
         setTimeout(() => setIsJumping(false), 800);
     };
 
+    // 🕹️ Controles
     useEffect(() => {
         const key = (e) => e.key === "ArrowUp" && handleJump();
         window.addEventListener("keydown", key);
@@ -202,8 +215,27 @@ export default function Fase4({ onNext }) {
         };
     });
 
+    // 💾 Salvar pontuação no banco
     useEffect(() => {
-        if (finished) {
+        if (finished && userId) {
+            const saveScore = async () => {
+                try {
+                    const response = await fetch("http://localhost:3000/api/salvar-pontuacao", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            userId,
+                            fase: "Oculta",
+                            pontuacao: score,
+                        }),
+                    });
+                    if (!response.ok) console.error("Erro ao salvar pontuação no servidor!");
+                } catch (error) {
+                    console.error("Erro de conexão com o servidor:", error);
+                }
+            };
+            saveScore();
+
             setShowRecompensa(true);
             const t = setTimeout(() => {
                 setShowRecompensa(false);
@@ -211,7 +243,7 @@ export default function Fase4({ onNext }) {
             }, 4000);
             return () => clearTimeout(t);
         }
-    }, [finished]);
+    }, [finished, userId, score]);
 
     const handleCharacterChoose = (char) => {
         setCharacter(char);
@@ -220,16 +252,22 @@ export default function Fase4({ onNext }) {
 
     return (
         <div className="runner-main" onClick={handleStart}>
-            <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg4})` }} />
+            <div className="bg-layer fixed" style={{ backgroundImage: `url(${bgForest})` }} />
+
+            {flashColor && <div className={`flash-overlay ${flashColor}`} />}
+            {floatingScores.map((f) => (
+                <div key={f.id} className={`floating-score ${f.color}`}>
+                    {f.text}
+                </div>
+            ))}
+
             <div className="logo-top"><img src={logo} alt="Logo" /></div>
 
             {!finished && (
                 <>
                     {running && (
                         <>
-                            <div className="cena-display">
-                                <span className="emoji">{cenaAtual.emoji}</span> {cenaAtual.frase}
-                            </div>
+                            <div className="emoji-display">{currentCreature.img}</div>
                             <CardPontuacao score={score} />
                             <BarraTempo timeLeft={timeLeft} />
                         </>
@@ -238,7 +276,7 @@ export default function Fase4({ onNext }) {
                     {character && (
                         <div
                             className={`character-wrap ${isJumping ? "jumping" : ""}`}
-                            style={{ left: `200px`, bottom: `${20 + positionY}px` }}
+                            style={{ left: `${charPosX}px`, bottom: `${20 + positionY}px` }}
                         >
                             <img src={character.src} alt={character.name} className="character" />
                         </div>
@@ -247,21 +285,20 @@ export default function Fase4({ onNext }) {
                     {running &&
                         entities.map((e) => (
                             <div key={e.id} className={`entity ${e.type}`} style={{ left: `${e.x}px`, bottom: `${20 + e.y}px` }}>
-                                {e.type === "word" ? <span className="word-text">{e.text}</span> : <img src={e.img} alt={e.type} />}
+                                {e.type === "creature" ? <span className="letter-char">{e.char}</span> : <img src={e.img} alt={e.type} />}
                             </div>
                         ))}
 
-                    {!running && !showSelector && <div className="hint">Clique para começar a Fase 4</div>}
+                    {!running && !showSelector && <div className="hint">Clique para iniciar a Fase Oculta 🌿</div>}
 
                     {showSelector && (
-                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} />
+                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} onClose={() => setShowSelector(false)} />
                     )}
                 </>
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} />}
-
             <Credito />
         </div>
     );

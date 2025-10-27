@@ -24,15 +24,15 @@
 }
 
 .contact-col ul li {
-    display: flex;
-    align-items: center;
-    margin: 20px 0;
-    font-weight: 40;
-    font-family: Arial, Helvetica, sans-serif;
+    display: flex !important;
+    align-items: center !important;
+    margin: 20px 0 !important;
+    font-weight: 40 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
 }
 
 .icon {
-    margin-right: 8px;
+    margin-right: 8px !important;
     color: #0BA0F4;
     font-size: 22px;
 }

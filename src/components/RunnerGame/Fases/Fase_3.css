@@ -91,6 +91,19 @@
     height: auto;
 }
 
+.emoji-display {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    background: #FA21C5;
+    border-radius: 14px;
+    padding: 6px 14px;
+    font-size: 30px;
+    font-weight: bold;
+    z-index: 30;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
 .character-wrap {
     position: absolute;
     z-index: 15;
@@ -98,8 +111,12 @@
 }
 
 .character {
-    width: 280px;
+    width: 300px !important;
     height: auto;
+}
+
+.character-wrap.jumping {
+    transform: translateY(-20px);
 }
 
 .entity {
@@ -126,44 +143,4 @@
     padding: 8px 16px;
     border-radius: 10px;
     font-weight: bold;
-}
-
-.letra-indicada {
-    position: absolute;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fa21c5;
-    padding: 10px 20px;
-    border-radius: 14px;
-    font-size: 22px;
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    z-index: 30;
-}
-
-.letter-char {
-    color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 50px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.btn-repetir {
-    background: #fa21c5;
-    border: none;
-    color: white;
-    padding: 8px 16px;
-    margin-left: 10px;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.btn-repetir:hover {
-    transform: scale(1.1);
 }

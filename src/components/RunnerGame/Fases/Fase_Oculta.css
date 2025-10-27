@@ -3,7 +3,7 @@
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    background: linear-gradient(#87ceeb, #bfe9ff);
+    background: linear-gradient(#074c2e, #0b6623);
     cursor: pointer;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .flash-overlay.green {
-    background: rgba(0, 255, 0, 0.4);
+    background: rgba(0, 255, 100, 0.4);
 }
 
 .flash-overlay.red {
@@ -71,6 +71,7 @@
     }
 }
 
+/* 🌿 Fundo e elementos */
 .bg-layer.fixed {
     position: absolute;
     inset: 0;
@@ -91,23 +92,22 @@
     height: auto;
 }
 
-.cena-display {
+/* Emoji no topo */
+.emoji-display {
     position: absolute;
-    top: 60px;
+    top: 40px;
     left: 50%;
-    transform: translateX(-50%);
-    background: #fff;
-    border: 3px solid #0ba0f4;
+    background: rgba(76, 175, 80, 0.9);
     border-radius: 14px;
-    padding: 8px 20px;
-    font-size: 26px;
+    padding: 6px 14px;
+    font-size: 36px;
     font-weight: bold;
-    color: #fa21c5;
     z-index: 30;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    color: #fff;
 }
 
+/* Personagem */
 .character-wrap {
     position: absolute;
     left: 100px;
@@ -124,11 +124,12 @@
     transform: translateY(-20px);
 }
 
+/* Entidades */
 .entity {
     position: absolute;
-    font-size: 40px !important;
+    font-size: 60px;
     font-weight: bold;
-    color: #fff !important;
+    color: white;
     text-shadow: 2px 2px 8px black;
     z-index: 12;
 }
@@ -138,23 +139,44 @@
     height: auto;
 }
 
-.word-text {
-    background: rgba(255, 255, 255, 0.8);
-    color: #0ba0f4;
-    border-radius: 10px;
-    padding: 4px 10px;
-    font-size: 22px;
-    font-weight: bold;
-}
-
+/* Dica */
 .hint {
     position: absolute;
     left: 50%;
     bottom: 5%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     color: white;
     padding: 8px 16px;
     border-radius: 10px;
     font-weight: bold;
+    font-size: 1rem;
+}
+
+/* ✨ Efeitos mágicos */
+.runner-main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    animation: sparkle 3s infinite;
+    z-index: 2;
+    pointer-events: none;
+}
+
+@keyframes sparkle {
+    0% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.05);
+    }
+
+    100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
 }

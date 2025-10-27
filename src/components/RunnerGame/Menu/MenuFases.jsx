@@ -1,4 +1,5 @@
-import React from "react";
+// src/components/MenuFases.jsx
+import React, { useState } from "react";
 import "./MenuFases.css";
 
 export default function MenuFases({
@@ -9,6 +10,9 @@ export default function MenuFases({
     nomeConfirmado,
     setNomeConfirmado,
 }) {
+    const [jogadorId, setJogadorId] = useState(null); // ID retornado do backend
+    const [carregando, setCarregando] = useState(false);
+
     const fases = [
         { id: 1, top: "85%", left: "70%" },
         { id: 2, top: "85%", left: "45%" },
@@ -19,8 +23,35 @@ export default function MenuFases({
         { id: 7, top: "45%", left: "65%" },
     ];
 
-    const handleConfirmarNome = () => {
+    // Função para registrar o jogador no backend
+    async function registrarJogador(nome) {
+        try {
+            setCarregando(true);
+            const response = await fetch("http://localhost:5000/api/jogadores/registrar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao registrar jogador");
+            }
+
+            const data = await response.json();
+            setJogadorId(data.id_jogador);
+            console.log("Jogador cadastrado com sucesso! ID:", data.id_jogador);
+            setCarregando(false);
+        } catch (error) {
+            console.error("Erro ao cadastrar jogador:", error);
+            alert("Ocorreu um erro ao registrar o jogador. Tente novamente.");
+            setCarregando(false);
+        }
+    }
+
+    // Quando o jogador confirma o nome
+    const handleConfirmarNome = async () => {
         if (nome.trim() !== "") {
+            await registrarJogador(nome); // chama o backend
             setNomeConfirmado(true);
         } else {
             alert("Por favor, digite seu nome para continuar!");
@@ -39,9 +70,14 @@ export default function MenuFases({
                         placeholder="Seu nome..."
                         value={nome}
                         onChange={(e) => setNome(e.target.value)}
+                        disabled={carregando}
                     />
-                    <button className="btn-confirmar" onClick={handleConfirmarNome}>
-                        Confirmar
+                    <button
+                        className="btn-confirmar"
+                        onClick={handleConfirmarNome}
+                        disabled={carregando}
+                    >
+                        {carregando ? "Registrando..." : "Confirmar"}
                     </button>
                 </div>
             )}

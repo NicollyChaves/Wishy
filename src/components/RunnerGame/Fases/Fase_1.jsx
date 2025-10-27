@@ -1,4 +1,3 @@
-// src/components/RunnerGame/Fase_1.jsx
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_1.css";
 
@@ -190,8 +189,9 @@ export default function Fase1({ onNext }) {
 
   // 🪄 Adiciona pontuação flutuante
   const addFloatingScore = (text, color) => {
-    const id = Date.now();
+    const id = `${Date.now()}-${Math.random()}`;
     setFloatingScores((prev) => [...prev, { id, text, color }]);
+
     setTimeout(() => {
       setFloatingScores((prev) => prev.filter((f) => f.id !== id));
     }, 1000);
