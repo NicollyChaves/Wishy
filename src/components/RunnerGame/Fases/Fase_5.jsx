@@ -46,7 +46,7 @@ const bonuses = [
     { type: "heart", img: heart, points: 20 },
 ];
 
-export default function Fase5({ onNext }) {
+export default function Fase5({ onNext, idJogador }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
@@ -55,7 +55,7 @@ export default function Fase5({ onNext }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(90);
+    const [timeLeft, setTimeLeft] = useState(10);
     const [fraseAtual, setFraseAtual] = useState(frases[0]);
     const [palavraIndex, setPalavraIndex] = useState(0);
     const [showRecompensa, setShowRecompensa] = useState(false);
@@ -253,7 +253,7 @@ export default function Fase5({ onNext }) {
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
-            {showFeedback && <Feedback pontuacao={score} onNext={onNext} />}
+            {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_5" />}
             <Credito />
         </div>
     );

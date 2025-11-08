@@ -1,4 +1,3 @@
-// src/components/RunnerGame/Fase_Oculta.jsx
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_Oculta.css";
 
@@ -40,7 +39,7 @@ const bonuses = [
     { type: "heart", img: heart, points: 25 },
 ];
 
-export default function FaseOculta({ onNext, userId }) {
+export default function FaseOculta({ onNext, idJogador }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
@@ -69,8 +68,18 @@ export default function FaseOculta({ onNext, userId }) {
         { name: "Zuppy", src: char5 },
     ];
 
+    // 🚀 Iniciar fase
     const handleStart = () => {
-        if (running || !character) return;
+        if (running) {
+            console.log("⚠️ A fase já está em execução, ignorando novo clique...");
+            return;
+        }
+        if (!character) {
+            console.warn("⚠️ Nenhum personagem selecionado — a fase não pode iniciar!");
+            return;
+        }
+
+        console.log("🌿 Iniciando Fase Oculta...");
         setRunning(true);
         setScore(0);
         setEntities([]);
@@ -81,7 +90,7 @@ export default function FaseOculta({ onNext, userId }) {
         setCurrentCreature(creatures[Math.floor(Math.random() * creatures.length)]);
         setCharPosX(100);
 
-        // 🌿 Spawner de criaturas, bônus e obstáculos
+        // 🌿 Spawner de entidades
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
             if (rand < 0.4) {
@@ -105,10 +114,11 @@ export default function FaseOculta({ onNext, userId }) {
             }
         }, 2000);
 
-        // 🕓 Timer do tempo da fase
+        // 🕓 Temporizador da fase
         timerRef.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
+                    console.log("⏰ Tempo esgotado! Encerrando fase...");
                     clearInterval(timerRef.current);
                     clearInterval(spawnRef.current);
                     setRunning(false);
@@ -120,6 +130,7 @@ export default function FaseOculta({ onNext, userId }) {
         }, 1000);
     };
 
+    // 🧚‍♀️ Alterna criaturas
     useEffect(() => {
         if (running) {
             emojiTimerRef.current = setInterval(() => {
@@ -129,6 +140,7 @@ export default function FaseOculta({ onNext, userId }) {
         return () => clearInterval(emojiTimerRef.current);
     }, [running]);
 
+    // 🎮 Loop do movimento
     useEffect(() => {
         if (!running) return;
         const loop = setInterval(() => {
@@ -140,6 +152,7 @@ export default function FaseOculta({ onNext, userId }) {
         return () => clearInterval(loop);
     }, [running]);
 
+    // ⚡ Colisões
     useEffect(() => {
         if (!running) return;
         const check = setInterval(() => {
@@ -157,26 +170,16 @@ export default function FaseOculta({ onNext, userId }) {
                         e.y + entH > positionY;
 
                     if (collided) {
-                        // ✅ Correto
                         if (e.type === "creature") {
                             setScore((s) => s + 15);
-                            setFlashColor("green");
                             addFloatingScore("+15", "green");
-                        }
-                        // 🌟 Bônus
-                        else if (e.type === "star" || e.type === "heart") {
+                        } else if (e.type === "star" || e.type === "heart") {
                             setScore((s) => s + (e.points || 10));
-                            setFlashColor("green");
                             addFloatingScore(`+${e.points}`, "yellow");
-                        }
-                        // ❌ Erro
-                        else {
+                        } else {
                             setScore((s) => Math.max(0, s - 5));
-                            setFlashColor("red");
                             addFloatingScore("-5", "red");
                         }
-
-                        setTimeout(() => setFlashColor(""), 300);
                     } else {
                         next.push(e);
                     }
@@ -185,9 +188,9 @@ export default function FaseOculta({ onNext, userId }) {
             });
         }, 100);
         return () => clearInterval(check);
-    }, [running, positionY, charPosX, currentCreature]);
+    }, [running, positionY, charPosX]);
 
-    // ✨ Score flutuante
+    // ✨ Pontuação flutuante
     const addFloatingScore = (text, color) => {
         const id = Date.now();
         setFloatingScores((prev) => [...prev, { id, text, color }]);
@@ -196,6 +199,7 @@ export default function FaseOculta({ onNext, userId }) {
         }, 1000);
     };
 
+    // 🕹️ Pulo
     const handleJump = () => {
         if (!running || isJumping) return;
         setIsJumping(true);
@@ -204,7 +208,7 @@ export default function FaseOculta({ onNext, userId }) {
         setTimeout(() => setIsJumping(false), 800);
     };
 
-    // 🕹️ Controles
+    // ⌨️ Controles
     useEffect(() => {
         const key = (e) => e.key === "ArrowUp" && handleJump();
         window.addEventListener("keydown", key);
@@ -217,23 +221,31 @@ export default function FaseOculta({ onNext, userId }) {
 
     // 💾 Salvar pontuação no banco
     useEffect(() => {
-        if (finished && userId) {
+        if (finished && idJogador) {
+            console.log(`🏁 Fase concluída! Salvando pontuação... (Jogador: ${idJogador}, Pontos: ${score})`);
+
             const saveScore = async () => {
                 try {
-                    const response = await fetch("http://localhost:3000/api/salvar-pontuacao", {
+                    const response = await fetch("http://localhost:5000/api/jogadores/pontuacao", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            userId,
-                            fase: "Oculta",
+                            id_jogador: idJogador,
+                            fase: "fase_oculta",
                             pontuacao: score,
                         }),
                     });
-                    if (!response.ok) console.error("Erro ao salvar pontuação no servidor!");
+
+                    if (!response.ok) {
+                        console.error(`❌ Erro ao salvar pontuação: ${response.statusText}`);
+                    } else {
+                        console.log("✅ Pontuação salva com sucesso no servidor!");
+                    }
                 } catch (error) {
-                    console.error("Erro de conexão com o servidor:", error);
+                    console.error("🚫 Erro de conexão com o servidor:", error);
                 }
             };
+
             saveScore();
 
             setShowRecompensa(true);
@@ -242,10 +254,13 @@ export default function FaseOculta({ onNext, userId }) {
                 setShowFeedback(true);
             }, 4000);
             return () => clearTimeout(t);
+        } else if (finished && !idJogador) {
+            console.warn("⚠️ Fase finalizada, mas nenhum 'idJogador' foi fornecido! A pontuação não será salva.");
         }
-    }, [finished, userId, score]);
+    }, [finished, idJogador, score]);
 
     const handleCharacterChoose = (char) => {
+        console.log(`🎨 Personagem escolhido: ${char.name}`);
         setCharacter(char);
         setShowSelector(false);
     };
@@ -298,7 +313,7 @@ export default function FaseOculta({ onNext, userId }) {
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
-            {showFeedback && <Feedback pontuacao={score} onNext={onNext} />}
+            {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_oculta" />}
             <Credito />
         </div>
     );

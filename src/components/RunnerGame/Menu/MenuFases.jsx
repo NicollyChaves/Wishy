@@ -1,4 +1,4 @@
-// src/components/MenuFases.jsx
+// MenuFases.jsx
 import React, { useState } from "react";
 import "./MenuFases.css";
 
@@ -9,8 +9,9 @@ export default function MenuFases({
     setNome,
     nomeConfirmado,
     setNomeConfirmado,
+    setJogadorId,
+    pontuacaoTotal, // 👈 Recebe do Game.jsx
 }) {
-    const [jogadorId, setJogadorId] = useState(null); // ID retornado do backend
     const [carregando, setCarregando] = useState(false);
 
     const fases = [
@@ -23,7 +24,11 @@ export default function MenuFases({
         { id: 7, top: "45%", left: "65%" },
     ];
 
-    // Função para registrar o jogador no backend
+    // 🕹️ Adiciona a Fase Oculta se o jogador atingiu 400 pontos
+    if (pontuacaoTotal >= 400) {
+        fases.push({ id: 8, top: "35%", left: "60%", oculta: true });
+    }
+
     async function registrarJogador(nome) {
         try {
             setCarregando(true);
@@ -33,25 +38,23 @@ export default function MenuFases({
                 body: JSON.stringify({ nome }),
             });
 
-            if (!response.ok) {
-                throw new Error("Erro ao registrar jogador");
-            }
+            if (!response.ok) throw new Error("Erro ao registrar jogador");
 
             const data = await response.json();
             setJogadorId(data.id_jogador);
             console.log("Jogador cadastrado com sucesso! ID:", data.id_jogador);
+
             setCarregando(false);
         } catch (error) {
             console.error("Erro ao cadastrar jogador:", error);
-            alert("Ocorreu um erro ao registrar o jogador. Tente novamente.");
+            alert("Erro ao registrar o jogador. Tente novamente.");
             setCarregando(false);
         }
     }
 
-    // Quando o jogador confirma o nome
     const handleConfirmarNome = async () => {
         if (nome.trim() !== "") {
-            await registrarJogador(nome); // chama o backend
+            await registrarJogador(nome);
             setNomeConfirmado(true);
         } else {
             alert("Por favor, digite seu nome para continuar!");
@@ -85,7 +88,7 @@ export default function MenuFases({
             {nomeConfirmado && (
                 <div className="mapa">
                     {fases.map((fase) => {
-                        const bloqueada = fase.id > faseAtual;
+                        const bloqueada = fase.id > faseAtual && !fase.oculta;
                         return (
                             <button
                                 key={fase.id}
@@ -93,7 +96,7 @@ export default function MenuFases({
                                 style={{ top: fase.top, left: fase.left }}
                                 onClick={() => !bloqueada && setFase(fase.id)}
                             >
-                                {bloqueada ? "🔒" : fase.id}
+                                {fase.oculta ? "8" : bloqueada ? "🔒" : fase.id}
                             </button>
                         );
                     })}

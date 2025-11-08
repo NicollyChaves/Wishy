@@ -23,7 +23,7 @@ import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 
-export default function Fase7({ onNext }) {
+export default function Fase7({ onNext, idJogador }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
@@ -32,9 +32,8 @@ export default function Fase7({ onNext }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(60);
+    const [timeLeft, setTimeLeft] = useState(10);
     const [storyParts, setStoryParts] = useState([]);
-    const [currentPart, setCurrentPart] = useState(null);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
 
@@ -67,7 +66,12 @@ export default function Fase7({ onNext }) {
     ];
 
     const handleStart = () => {
-        if (running || !character) return;
+        if (running || !character) {
+            console.warn("⚠️ Não é possível iniciar: jogo já em andamento ou personagem não escolhido.");
+            return;
+        }
+
+        console.log("🏁 Iniciando fase 7 com personagem:", character.name);
         setRunning(true);
         setScore(0);
         setEntities([]);
@@ -75,35 +79,37 @@ export default function Fase7({ onNext }) {
         setFinished(false);
         setShowRecompensa(false);
         setShowFeedback(false);
-        setCurrentPart(phrases[0]);
         setTimeLeft(60);
 
+        // Cria os elementos na tela
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
             if (rand < 0.4) {
                 const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
                 setEntities((prev) => [
                     ...prev,
-                    { id: Date.now() + Math.random(), type: "word", text: randomPhrase.text, phraseId: randomPhrase.id, x: 1000, y: 0 },
+                    { id: Date.now(), type: "word", text: randomPhrase.text, phraseId: randomPhrase.id, x: 1000, y: 0 },
                 ]);
             } else if (rand < 0.7) {
                 const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
                 setEntities((prev) => [
                     ...prev,
-                    { id: Date.now() + Math.random(), type: obs.type, img: obs.img, x: 1000, y: 0 },
+                    { id: Date.now(), type: obs.type, img: obs.img, x: 1000, y: 0 },
                 ]);
             } else {
                 const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
                 setEntities((prev) => [
                     ...prev,
-                    { id: Date.now() + Math.random(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 },
+                    { id: Date.now(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 },
                 ]);
             }
         }, 2500);
 
+        // Controla o tempo
         timerRef.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
+                    console.log("⏰ Tempo acabou!");
                     clearInterval(timerRef.current);
                     clearInterval(spawnRef.current);
                     setRunning(false);
@@ -119,7 +125,9 @@ export default function Fase7({ onNext }) {
     useEffect(() => {
         if (!running) return;
         const loop = setInterval(() => {
-            setEntities((prev) => prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -150));
+            setEntities((prev) =>
+                prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -150)
+            );
         }, 30);
         return () => clearInterval(loop);
     }, [running]);
@@ -133,6 +141,7 @@ export default function Fase7({ onNext }) {
                 prev.forEach((e) => {
                     const collided = e.x < 220 && e.x > 50 && e.y < 100;
                     if (collided) {
+                        console.log("💥 Colisão detectada com:", e.type);
                         if (e.type === "word") {
                             setStoryParts((parts) => {
                                 if (!parts.find((p) => p.id === e.phraseId)) {
@@ -146,9 +155,7 @@ export default function Fase7({ onNext }) {
                         } else {
                             setScore((s) => Math.max(0, s - 10));
                         }
-                    } else {
-                        next.push(e);
-                    }
+                    } else next.push(e);
                 });
                 return next;
             });
@@ -174,8 +181,10 @@ export default function Fase7({ onNext }) {
         };
     });
 
+    // Finalização da fase
     useEffect(() => {
         if (finished) {
+            console.log("🏆 Fase finalizada! Pontuação:", score);
             setShowRecompensa(true);
             const t = setTimeout(() => {
                 setShowRecompensa(false);
@@ -186,6 +195,7 @@ export default function Fase7({ onNext }) {
     }, [finished]);
 
     const handleCharacterChoose = (char) => {
+        console.log("🎭 Personagem escolhido:", char.name);
         setCharacter(char);
         setShowSelector(false);
     };
@@ -227,13 +237,27 @@ export default function Fase7({ onNext }) {
                     {!running && !showSelector && <div className="hint">Clique para começar a Corrida Final 🏁</div>}
 
                     {showSelector && (
-                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} onClose={() => setShowSelector(false)} />
+                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} />
                     )}
                 </>
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
-            {showFeedback && <Feedback pontuacao={score} onNext={onNext} />}
+            {showFeedback && (
+                <Feedback
+                    pontuacao={score}
+                    onNext={() => {
+                        console.log("➡️ Tentando avançar para a fase oculta...");
+                        try {
+                            onNext();
+                        } catch (err) {
+                            console.error("❌ Erro ao chamar onNext:", err);
+                        }
+                    }}
+                    idJogador={idJogador}
+                    fase="fase_7"
+                />
+            )}
 
             {finished && storyParts.length > 0 && (
                 <div className="story-popup">

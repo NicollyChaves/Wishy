@@ -46,7 +46,7 @@ const bonuses = [
     { type: "heart", img: heart, points: 20 },
 ];
 
-export default function Fase3({ onNext }) {
+export default function Fase3({ onNext, idJogador }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
@@ -55,7 +55,7 @@ export default function Fase3({ onNext }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(90);
+    const [timeLeft, setTimeLeft] = useState(10);
     const [letraCorreta, setLetraCorreta] = useState("");
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
@@ -279,7 +279,7 @@ export default function Fase3({ onNext }) {
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
-            {showFeedback && <Feedback pontuacao={score} onNext={onNext} />}
+            {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_3" />}
 
             <Credito />
         </div>

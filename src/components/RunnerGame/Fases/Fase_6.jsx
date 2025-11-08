@@ -32,11 +32,11 @@ const frases = [
     { texto: "O menino comeu uma ___", correta: "🍎", opcoes: ["🍎", "🪨", "🌲"] },
 ];
 
-export default function Fase6({ onNext }) {
+export default function Fase6({ onNext, idJogador }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(60);
+    const [timeLeft, setTimeLeft] = useState(10);
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
@@ -234,7 +234,7 @@ export default function Fase6({ onNext }) {
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
-            {showFeedback && <Feedback pontuacao={score} onNext={onNext} />}
+            {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_6" />}
             <Credito />
         </div>
     );

@@ -1,3 +1,4 @@
+// Game.jsx
 import { useState } from "react";
 import Fase1 from "../RunnerGame/Fases/Fase_1";
 import Fase2 from "../RunnerGame/Fases/Fase_2";
@@ -21,37 +22,42 @@ import ManualFaseOculta from "../RunnerGame/Manuais/Manual_Fase_Oculta";
 
 export default function Game() {
   const [fase, setFase] = useState(0); // 0 = menu
-  const [faseAtual, setFaseAtual] = useState(1); // começa liberando só a fase 1
-  const [mostrarManual, setMostrarManual] = useState(true); // mostra manual ao iniciar fase
-  const [nome, setNome] = useState(""); // nome do jogador
-  const [nomeConfirmado, setNomeConfirmado] = useState(false); // confirma nome
-  const [pontuacaoTotal, setPontuacaoTotal] = useState(0); // soma total de pontos
+  const [faseAtual, setFaseAtual] = useState(1);
+  const [mostrarManual, setMostrarManual] = useState(true);
+  const [nome, setNome] = useState("");
+  const [nomeConfirmado, setNomeConfirmado] = useState(false);
+  const [pontuacaoTotal, setPontuacaoTotal] = useState(0);
+  const [idJogador, setJogadorId] = useState(null);
 
-  // Função chamada ao finalizar uma fase
+  // 🧩 Função chamada ao finalizar uma fase
   function avancarFase(pontosDaFase = 0) {
+    console.log("🎯 Avançando de fase... pontos recebidos:", pontosDaFase);
     const novaPontuacao = pontuacaoTotal + pontosDaFase;
     setPontuacaoTotal(novaPontuacao);
+    console.log("🏆 Pontuação total atualizada:", novaPontuacao);
 
-    // Se terminou a fase 7, verifica se desbloqueia a fase oculta
     if (fase === 7) {
-      if (novaPontuacao >= 4) {
-        setFase(8); // Fase oculta
+      console.log("🌀 Fase 7 concluída! Verificando desbloqueio da Fase Oculta...");
+      if (novaPontuacao >= 100) {
+        console.log("✨ Fase Oculta desbloqueada! Indo para a Fase 8...");
+        setFase(8);
         setMostrarManual(true);
       } else {
-        setFase(0); // volta ao menu
+        console.log("🔒 Pontuação insuficiente. Voltando ao menu.");
+        setFase(0);
       }
       return;
     }
 
-    // Se não chegou na 7 ainda, avança normalmente
     if (fase < 7) {
-      setFaseAtual((prev) => Math.min(prev + 1, 7)); // libera próxima fase
-      setFase(0); // volta pro menu
+      setFaseAtual((prev) => Math.min(prev + 1, 7));
+      setFase(0);
       setMostrarManual(true);
     } else {
       setFase(0);
     }
   }
+
 
   return (
     <div className="game">
@@ -64,6 +70,8 @@ export default function Game() {
           setNome={setNome}
           nomeConfirmado={nomeConfirmado}
           setNomeConfirmado={setNomeConfirmado}
+          setJogadorId={setJogadorId}
+          pontuacaoTotal={pontuacaoTotal} // 👈 envia pontuação total para o menu
         />
       )}
 
@@ -72,7 +80,7 @@ export default function Game() {
         (mostrarManual ? (
           <ManualFase1 onStart={() => setMostrarManual(false)} />
         ) : (
-          <Fase1 onNext={avancarFase} />
+          <Fase1 onNext={avancarFase} idJogador={idJogador} />
         ))}
 
       {/* 🌳 Fase 2 */}
@@ -80,7 +88,7 @@ export default function Game() {
         (mostrarManual ? (
           <ManualFase2 onStart={() => setMostrarManual(false)} />
         ) : (
-          <Fase2 onNext={avancarFase} />
+          <Fase2 onNext={avancarFase} idJogador={idJogador} />
         ))}
 
       {/* 🌻 Fase 3 */}
@@ -88,7 +96,7 @@ export default function Game() {
         (mostrarManual ? (
           <ManualFase3 onStart={() => setMostrarManual(false)} />
         ) : (
-          <Fase3 onNext={avancarFase} />
+          <Fase3 onNext={avancarFase} idJogador={idJogador} />
         ))}
 
       {/* 🌎 Fase 4 */}
@@ -96,7 +104,7 @@ export default function Game() {
         (mostrarManual ? (
           <ManualFase4 onStart={() => setMostrarManual(false)} />
         ) : (
-          <Fase4 onNext={avancarFase} />
+          <Fase4 onNext={avancarFase} idJogador={idJogador} />
         ))}
 
       {/* 🌊 Fase 5 */}
@@ -104,7 +112,7 @@ export default function Game() {
         (mostrarManual ? (
           <ManualFase5 onStart={() => setMostrarManual(false)} />
         ) : (
-          <Fase5 onNext={avancarFase} />
+          <Fase5 onNext={avancarFase} idJogador={idJogador} />
         ))}
 
       {/* 🌋 Fase 6 */}
@@ -112,7 +120,7 @@ export default function Game() {
         (mostrarManual ? (
           <ManualFase6 onStart={() => setMostrarManual(false)} />
         ) : (
-          <Fase6 onNext={avancarFase} />
+          <Fase6 onNext={avancarFase} idJogador={idJogador} />
         ))}
 
       {/* 🌟 Fase 7 */}
@@ -120,7 +128,7 @@ export default function Game() {
         (mostrarManual ? (
           <ManualFase7 onStart={() => setMostrarManual(false)} />
         ) : (
-          <Fase7 onNext={avancarFase} />
+          <Fase7 onNext={avancarFase} idJogador={idJogador} />
         ))}
 
       {/* 🔥 Fase Oculta */}
@@ -128,7 +136,7 @@ export default function Game() {
         (mostrarManual ? (
           <ManualFaseOculta onStart={() => setMostrarManual(false)} />
         ) : (
-          <FaseOculta onNext={avancarFase} />
+          <FaseOculta onNext={avancarFase} idJogador={idJogador} />
         ))}
     </div>
   );
