@@ -38,14 +38,14 @@ export default function Game() {
 
     if (fase === 7) {
       console.log("🌀 Fase 7 concluída! Verificando desbloqueio da Fase Oculta...");
-      if (novaPontuacao >= 100) {
+
+      // ✅ Só libera se a fase 7 foi concluída (não apenas pontuação)
+      setTimeout(() => {
         console.log("✨ Fase Oculta desbloqueada! Indo para a Fase 8...");
-        setFase(8);
+        setFase(8); // vai para a fase oculta
         setMostrarManual(true);
-      } else {
-        console.log("🔒 Pontuação insuficiente. Voltando ao menu.");
-        setFase(0);
-      }
+      }, 1500);
+      
       return;
     }
 

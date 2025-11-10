@@ -55,7 +55,7 @@ export default function Fase3({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(10);
+    const [timeLeft, setTimeLeft] = useState(5);
     const [letraCorreta, setLetraCorreta] = useState("");
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);

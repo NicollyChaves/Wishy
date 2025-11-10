@@ -55,7 +55,7 @@ export default function Fase5({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(10);
+    const [timeLeft, setTimeLeft] = useState(5);
     const [fraseAtual, setFraseAtual] = useState(frases[0]);
     const [palavraIndex, setPalavraIndex] = useState(0);
     const [showRecompensa, setShowRecompensa] = useState(false);

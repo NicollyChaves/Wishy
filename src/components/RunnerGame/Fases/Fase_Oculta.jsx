@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_Oculta.css";
+import Ranking from "../../Ranking/Ranking";
 
 import bgForest from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
 import char1 from "../../../assets/imagens/runner/character1.gif";
@@ -55,6 +56,8 @@ export default function FaseOculta({ onNext, idJogador }) {
     const [showFeedback, setShowFeedback] = useState(false);
     const [flashColor, setFlashColor] = useState("");
     const [floatingScores, setFloatingScores] = useState([]);
+
+    const [showRanking, setShowRanking] = useState(false);
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
@@ -265,6 +268,24 @@ export default function FaseOculta({ onNext, idJogador }) {
         setShowSelector(false);
     };
 
+    useEffect(() => {
+        if (finished) {
+            setShowRecompensa(true);
+            const t = setTimeout(() => {
+                setShowRecompensa(false);
+                setShowFeedback(true);
+            }, 4000);
+            return () => clearTimeout(t);
+        }
+    }, [finished]);
+
+    // 🔹 Quando Feedback terminar (ex: após clicar “Próxima Fase”), abrir o Ranking
+    const handleNext = () => {
+        setShowFeedback(false);
+        setShowRanking(true);
+    };
+
+
     return (
         <div className="runner-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bgForest})` }} />
@@ -313,7 +334,20 @@ export default function FaseOculta({ onNext, idJogador }) {
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
-            {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_oculta" />}
+            {showFeedback && <Feedback pontuacao={score} onNext={() => {
+                console.log("🏁 Exibindo ranking antes de avançar...");
+                setShowFeedback(false);
+                setShowRanking(true);
+                // ⏳ Depois de 5 segundos, chama o onNext() real
+                setTimeout(() => {
+                    try {
+                        onNext();
+                    } catch (err) {
+                        console.error("❌ Erro ao chamar onNext:", err);
+                    }
+                }, 5000);
+            }} idJogador={idJogador} fase="fase_oculta" />}
+            {showRanking && <Ranking onClose={() => setShowRanking(false)} />}
             <Credito />
         </div>
     );

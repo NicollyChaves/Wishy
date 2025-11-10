@@ -49,7 +49,7 @@ export default function Fase2({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(10);
+    const [timeLeft, setTimeLeft] = useState(5);
     const [currentWord, setCurrentWord] = useState(words[0]);
     const [collectedLetters, setCollectedLetters] = useState([]);
     const [charPosX, setCharPosX] = useState(100);

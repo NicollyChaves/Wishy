@@ -34,14 +34,21 @@ export const atualizarPontuacaoTotal = (id_jogador, callback) => {
   db.query(sql, [id_jogador], callback);
 };
 
-// Lista o Top 10 jogadores pelo total de pontuação
-export const listarTop10 = (callback) => {
+// 🔹 Lista os 10 melhores jogadores (ordenados por pontuação_total)
+export function listarTop10(callback) {
   const sql = `
-    SELECT j.nome, p.pontuacao_total 
+    SELECT j.id_jogador, j.nome, p.pontuacao_total
     FROM tb_jogador j
     JOIN tb_pontuacao p ON j.id_jogador = p.id_jogador
     ORDER BY p.pontuacao_total DESC
-    LIMIT 10
+    LIMIT 10;
   `;
-  db.query(sql, callback);
-};
+
+  global.db.query(sql, (err, results) => {
+    if (err) {
+      console.error("💥 Erro ao buscar Top 10 jogadores:", err);
+      return callback(err, null);
+    }
+    callback(null, results);
+  });
+}

@@ -76,7 +76,7 @@ export default function Fase4({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(10);
+    const [timeLeft, setTimeLeft] = useState(5);
     const [cenaAtual, setCenaAtual] = useState(cenas[0]);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);

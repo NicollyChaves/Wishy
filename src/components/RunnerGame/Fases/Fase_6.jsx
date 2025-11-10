@@ -36,7 +36,7 @@ export default function Fase6({ onNext, idJogador }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(10);
+    const [timeLeft, setTimeLeft] = useState(5);
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);

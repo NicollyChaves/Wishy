@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import jogadorRoutes from "./routes/jogadorRoutes.js";
+import { rankingTop10 } from "./controllers/jogadorController.js";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use((req, res, next) => {
 
 // Rotas
 app.use("/api/jogadores", jogadorRoutes);
+app.get("/api/jogadores/ranking", rankingTop10);
 
 
 const PORT = process.env.PORT || 5000;

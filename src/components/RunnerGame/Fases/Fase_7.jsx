@@ -1,6 +1,7 @@
 // src/components/RunnerGame/Fase_7.jsx
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_7.css";
+import Ranking from "../../Ranking/Ranking";
 
 import bg1 from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
 import logo from "../../../assets/imagens/runner/Logo_2.png";
@@ -32,10 +33,12 @@ export default function Fase7({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(10);
+    const [timeLeft, setTimeLeft] = useState(5);
     const [storyParts, setStoryParts] = useState([]);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
+
+    const [showRanking, setShowRanking] = useState(false);
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
@@ -200,6 +203,24 @@ export default function Fase7({ onNext, idJogador }) {
         setShowSelector(false);
     };
 
+    useEffect(() => {
+        if (finished) {
+            setShowRecompensa(true);
+            const t = setTimeout(() => {
+                setShowRecompensa(false);
+                setShowFeedback(true);
+            }, 4000);
+            return () => clearTimeout(t);
+        }
+    }, [finished]);
+
+    // 🔹 Quando Feedback terminar (ex: após clicar “Próxima Fase”), abrir o Ranking
+    const handleNext = () => {
+        setShowFeedback(false);
+        setShowRanking(true);
+    };
+
+
     return (
         <div className="runner-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg1})` }} />
@@ -247,17 +268,24 @@ export default function Fase7({ onNext, idJogador }) {
                 <Feedback
                     pontuacao={score}
                     onNext={() => {
-                        console.log("➡️ Tentando avançar para a fase oculta...");
-                        try {
-                            onNext();
-                        } catch (err) {
-                            console.error("❌ Erro ao chamar onNext:", err);
-                        }
+                        console.log("🏁 Exibindo ranking antes de avançar...");
+                        setShowFeedback(false);
+                        setShowRanking(true);
+                        // ⏳ Depois de 5 segundos, chama o onNext() real
+                        setTimeout(() => {
+                            try {
+                                onNext();
+                            } catch (err) {
+                                console.error("❌ Erro ao chamar onNext:", err);
+                            }
+                        }, 5000);
                     }}
                     idJogador={idJogador}
                     fase="fase_7"
                 />
             )}
+
+            {showRanking && <Ranking onClose={() => setShowRanking(false)} />}
 
             {finished && storyParts.length > 0 && (
                 <div className="story-popup">

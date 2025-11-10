@@ -15,6 +15,7 @@ import star from "../../../assets/imagens/runner/Estrela.png";
 import heart from "../../../assets/imagens/runner/Coracao.png";
 
 export default function Manual_Fase_1({ onStart  }) {
+    
     return (
         <div className="manual-container">
             <div className="manual-card">

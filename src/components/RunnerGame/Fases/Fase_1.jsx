@@ -40,7 +40,6 @@ const bonuses = [
 ];
 
 export default function Fase1({ onNext, idJogador }) {
-
   const [running, setRunning] = useState(false);
   const [character, setCharacter] = useState(null);
   const [score, setScore] = useState(0);
@@ -49,13 +48,11 @@ export default function Fase1({ onNext, idJogador }) {
   const [entities, setEntities] = useState([]);
   const [finished, setFinished] = useState(false);
   const [showSelector, setShowSelector] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [currentWord, setCurrentWord] = useState(words[0]);
-  const [charPosX, setCharPosX] = useState(100);
+  const [charPosX] = useState(100); // posição fixa do personagem
   const [showRecompensa, setShowRecompensa] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-
-  // ✨ Novos estados para o flash e score flutuante
   const [flashColor, setFlashColor] = useState("");
   const [floatingScores, setFloatingScores] = useState([]);
 
@@ -81,7 +78,6 @@ export default function Fase1({ onNext, idJogador }) {
     setShowRecompensa(false);
     setShowFeedback(false);
     setCurrentWord(words[Math.floor(Math.random() * words.length)]);
-    setCharPosX(100);
 
     spawnRef.current = setInterval(() => {
       const rand = Math.random();
@@ -124,24 +120,27 @@ export default function Fase1({ onNext, idJogador }) {
     if (running) {
       emojiTimerRef.current = setInterval(() => {
         setCurrentWord(words[Math.floor(Math.random() * words.length)]);
-      }, 30000);
+      }, 10000);
     }
     return () => clearInterval(emojiTimerRef.current);
   }, [running]);
 
+  // 🔥 Remove movimento automático do personagem
   useEffect(() => {
     if (!running) return;
     const loop = setInterval(() => {
-      setCharPosX((x) => Math.min(x + 0.5, 300));
+      // O personagem não se move mais — apenas os obstáculos se movem
       setEntities((prev) => prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -120));
     }, 30);
     return () => clearInterval(loop);
   }, [running]);
 
-  // 🎯 Colisões + Flash colorido + Score flutuante
+  // 🎯 Colisões + Flash colorido + Score flutuante (sem contar pontuação durante o pulo)
   useEffect(() => {
     if (!running) return;
     const check = setInterval(() => {
+      if (isJumping) return; // não faz checagem de colisão enquanto pula
+
       setEntities((prev) => {
         const next = [];
         prev.forEach((e) => {
@@ -155,12 +154,18 @@ export default function Fase1({ onNext, idJogador }) {
             e.y < positionY + charHeight &&
             e.y + entH > positionY;
 
-          if (collided) {
+          if (collided && !e.hit) {
+            e.hit = true;
+
             if (e.type === "letter") {
               if (currentWord && e.char === currentWord.correct) {
                 setScore((s) => s + 10);
                 setFlashColor("green");
                 addFloatingScore("+10", "green");
+
+                // 💥 troca o emoji imediatamente ao acertar
+                setCurrentWord(words[Math.floor(Math.random() * words.length)]);
+
               } else {
                 setScore((s) => Math.max(0, s - 5));
                 setFlashColor("red");
@@ -176,23 +181,21 @@ export default function Fase1({ onNext, idJogador }) {
               addFloatingScore("-10", "red");
             }
 
-            // Reseta o flash depois de 300ms
             setTimeout(() => setFlashColor(""), 300);
-          } else {
+          } else if (!collided) {
             next.push(e);
           }
+
         });
         return next;
       });
     }, 100);
     return () => clearInterval(check);
-  }, [running, positionY, charPosX, currentWord]);
+  }, [running, positionY, charPosX, currentWord, isJumping]);
 
-  // 🪄 Adiciona pontuação flutuante
   const addFloatingScore = (text, color) => {
     const id = `${Date.now()}-${Math.random()}`;
     setFloatingScores((prev) => [...prev, { id, text, color }]);
-
     setTimeout(() => {
       setFloatingScores((prev) => prev.filter((f) => f.id !== id));
     }, 1000);
@@ -201,9 +204,9 @@ export default function Fase1({ onNext, idJogador }) {
   const handleJump = () => {
     if (!running || isJumping) return;
     setIsJumping(true);
-    setPositionY(150);
-    setTimeout(() => setPositionY(0), 500);
-    setTimeout(() => setIsJumping(false), 800);
+    setPositionY(220);
+    setTimeout(() => setPositionY(0), 700);
+    setTimeout(() => setIsJumping(false), 900);
   };
 
   useEffect(() => {
@@ -236,10 +239,8 @@ export default function Fase1({ onNext, idJogador }) {
     <div className="runner-main" onClick={handleStart}>
       <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg1})` }} />
 
-      {/* 🔥 Flash colorido */}
       {flashColor && <div className={`flash-overlay ${flashColor}`} />}
 
-      {/* 💫 Scores flutuantes */}
       {floatingScores.map((f) => (
         <div key={f.id} className={`floating-score ${f.color}`}>
           {f.text}
