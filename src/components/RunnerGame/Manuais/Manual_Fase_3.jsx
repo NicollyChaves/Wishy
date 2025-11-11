@@ -112,7 +112,7 @@ export default function Manual_Fase_3({ onStart }) {
                 <section className="manual-section">
                     <h3>⏱️ Tempo</h3>
                     <p>
-                        Você terá <b>90 segundos</b> para ouvir os sons e acertar o máximo de letras possível!
+                        Você terá <b>30 segundos</b> para ouvir os sons e acertar o máximo de letras possível!
                     </p>
                 </section>
 

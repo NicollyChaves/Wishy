@@ -1,75 +1,157 @@
-/* src/pages/Ranking.css */
-.ranking-container {
-    text-align: center;
-    padding: 30px;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.75);
+/* Botão de Ranking */
+.btn-ranking {
+    position: absolute;
+    bottom: 80px;
+    /* acima do botão de créditos */
+    left: 25px;
+    background: linear-gradient(135deg, #fa21c5, #0ba0f4);
+    color: white;
+    border: none;
     border-radius: 20px;
-    box-shadow: 0 0 20px #ffd700;
-    max-width: 600px;
-    margin: 50px auto;
-    animation: fadeIn 1s ease;
+    padding: 10px 22px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    z-index: 100;
 }
 
-.ranking-title {
-    font-size: 2rem;
+.btn-ranking:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 179, 0, 0.6);
+}
+
+/* Tela escurecida */
+.ranking-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Cartão do Ranking */
+.ranking-card {
+    background: white;
+    color: #333;
+    border-radius: 20px;
+    padding: 30px 40px;
+    text-align: center;
+    width: 420px;
+    max-width: 90%;
+    animation: slideUp 0.4s ease;
+    box-shadow: 0 0 25px rgba(255, 179, 0, 0.4);
+}
+
+.ranking-card h2 {
+    color: #fa21c5;
+    margin-bottom: 8px;
+}
+
+.sub {
+    color: #0ba0f4;
+    font-weight: bold;
     margin-bottom: 20px;
-    text-shadow: 0 0 10px gold;
 }
 
-.ranking-list {
+.ranking-lista {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
-.ranking-card {
+/* Estilo dos itens de ranking */
+.ranking-item {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    background: #222;
-    padding: 10px 20px;
+    background: linear-gradient(90deg, #fff0f9, #f0f9ff);
     border-radius: 12px;
-    transition: transform 0.3s;
+    padding: 8px 14px;
+    font-weight: bold;
+    color: #444;
+    box-shadow: 0 0 8px rgba(250, 33, 197, 0.1);
+    transition: transform 0.2s ease;
 }
 
-.ranking-card:hover {
-    transform: scale(1.03);
+.ranking-item:hover {
+    transform: scale(1.02);
 }
 
-.ranking-posicao {
-    font-size: 1.5rem;
+.posicao {
+    color: #fa21c5;
+    width: 40px;
+    text-align: left;
+}
+
+.nome {
+    flex: 1;
+    text-align: left;
+    color: #0ba0f4;
+}
+
+.pontos {
+    color: #ffb300;
     font-weight: bold;
 }
 
-.ranking-info {
-    flex-grow: 1;
+/* Destaque especial para o Top 1 */
+.ranking-item.top1 {
+    background: linear-gradient(90deg, #ffe08a, #fff7d1);
+    border: 2px solid #ffb300;
+    box-shadow: 0 0 15px rgba(255, 179, 0, 0.4);
 }
 
-.ranking-img {
-    width: 50px;
-    height: 50px;
+/* Mensagens */
+.sem-dados {
+    color: #777;
+    font-style: italic;
 }
 
-.btn-voltar {
-    margin-top: 20px;
-    background: #ffcc00;
-    color: #000;
+.erro {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Botão de Fechar */
+.btn-fechar {
+    background: #fa21c5;
+    color: white;
     border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
+    padding: 8px 16px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: bold;
+    transition: 0.3s;
 }
 
+.btn-fechar:hover {
+    background: #0ba0f4;
+}
+
+/* Animações */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
     }
 
     to {
         opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+
+    to {
         transform: translateY(0);
+        opacity: 1;
     }
 }

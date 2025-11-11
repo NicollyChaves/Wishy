@@ -85,7 +85,7 @@ export default function Manual_Fase_5({ onStart }) {
                 <section className="manual-section">
                     <h3>⏱️ Tempo</h3>
                     <p>
-                        Você terá <b>90 segundos</b> para montar o maior número de frases possível!
+                        Você terá <b>30 segundos</b> para montar o maior número de frases possível!
                         Preste atenção e ouça com cuidado 💕
                     </p>
                 </section>

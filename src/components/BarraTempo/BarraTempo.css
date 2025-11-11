@@ -1,19 +1,26 @@
 .time-bar {
-    position: absolute !important;
-    top: 400px !important;
-    right: 20px !important;
-    width: 350px;
-    height: 20px;
+    position: absolute;
+    bottom: 20px;
+    /* encosta no rodapé */
+    right: 20px;
+    /* canto direito */
+    width: 20px;
+    /* mais estreita, vertical */
+    height: 150px;
+    /* altura da barra */
     border: 2px solid #ffffff;
     border-radius: 10px;
     overflow: hidden;
     background: #ffffff;
     z-index: 40;
+    display: flex;
+    align-items: flex-end;
+    /* faz a barra encher de baixo pra cima */
 }
 
 .time-fill {
-    height: 100%;
     width: 100%;
-    background: linear-gradient(to right, #FA21C5, #0BA0F4);
-    transition: width 1s linear;
+    background: linear-gradient(to top, #FA21C5, #0BA0F4);
+    transition: height 0.5s linear;
+    border-radius: 0 0 8px 8px;
 }

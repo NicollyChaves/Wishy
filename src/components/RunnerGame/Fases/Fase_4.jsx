@@ -22,39 +22,15 @@ import CardPontuacao from "../../CardPontuacao/CardPontuacao";
 import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
+import Ranking from "../../Ranking/Ranking";
 
 // 👇 Cenas do cotidiano
 const cenas = [
-    {
-        emoji: "🏫",
-        frase: "Ir para a escola",
-        correta: "Escola",
-        opcoes: ["Escola", "Cama", "Bola", "Chuva"],
-    },
-    {
-        emoji: "🍽",
-        frase: "Hora do almoço",
-        correta: "Almoço",
-        opcoes: ["Almoço", "Mochila", "Sol", "Mesa"],
-    },
-    {
-        emoji: "🌧",
-        frase: "Dia de chuva",
-        correta: "Guarda-chuva",
-        opcoes: ["Mesa", "Guarda-chuva", "Sapato", "Peixe"],
-    },
-    {
-        emoji: "🛏",
-        frase: "Hora de dormir",
-        correta: "Cama",
-        opcoes: ["Flor", "Cama", "Escola", "Copo"],
-    },
-    {
-        emoji: "🚴‍♀️",
-        frase: "Brincar com os amigos",
-        correta: "Bicicleta",
-        opcoes: ["Cadeira", "Pão", "Bicicleta", "Janela"],
-    },
+    { emoji: "🏫", frase: "Ir para a escola", correta: "Estudar", opcoes: ["Estudar", "Cama", "Bola", "Chuva"] },
+    { emoji: "🛏️", frase: "Hora de dormir", correta: "Cama", opcoes: ["Flor", "Cama", "Escola", "Copo"] },
+    { emoji: "🛝", frase: "Brincar com os amigos", correta: "Bicicleta", opcoes: ["Cadeira", "Pão", "Bicicleta", "Janela"] },
+    { emoji: "🏠", frase: "Voltar pra casa", correta: "Casa", opcoes: ["Escola", "Casa", "Janela", "Cama"] },
+    { emoji: "🛒", frase: "Fazer compras", correta: "Mercado", opcoes: ["Mercado", "Praia", "Parque", "Carro"] },
 ];
 
 const obstacles = [
@@ -76,13 +52,16 @@ export default function Fase4({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(5);
+    const [timeLeft, setTimeLeft] = useState(30);
     const [cenaAtual, setCenaAtual] = useState(cenas[0]);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
+    const [flashColor, setFlashColor] = useState("");
+    const [floatingScores, setFloatingScores] = useState([]);
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
+    const cenaTimerRef = useRef(null);
 
     const personagens = [
         { name: "Lulix", src: char1 },
@@ -92,6 +71,7 @@ export default function Fase4({ onNext, idJogador }) {
         { name: "Zuppy", src: char5 },
     ];
 
+    // 🚀 Inicia a fase
     const handleStart = () => {
         if (running || !character) return;
         setRunning(true);
@@ -103,19 +83,27 @@ export default function Fase4({ onNext, idJogador }) {
         setShowFeedback(false);
         setCenaAtual(cenas[Math.floor(Math.random() * cenas.length)]);
 
+        // ✨ Alterar cena a cada 10 segundos
+        cenaTimerRef.current = setInterval(() => {
+            setCenaAtual(cenas[Math.floor(Math.random() * cenas.length)]);
+        }, 10000);
+
+        // 🎯 Spawns (com maior probabilidade de aparecer a palavra correta)
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
-            if (rand < 0.5) {
-                // palavras (as opções da cena atual)
-                const palavra =
-                    cenaAtual.opcoes[
-                    Math.floor(Math.random() * cenaAtual.opcoes.length)
-                    ];
+
+            if (rand < 0.6) {
+                // 60% de chance de gerar palavra (com mais chance da correta aparecer)
+                const showCorreta = Math.random() < 0.5; // 50% chance de ser a correta
+                const palavra = showCorreta
+                    ? cenaAtual.correta
+                    : cenaAtual.opcoes[Math.floor(Math.random() * cenaAtual.opcoes.length)];
+
                 setEntities((prev) => [
                     ...prev,
                     { id: Date.now() + Math.random(), type: "word", text: palavra, x: 1000, y: 0 },
                 ]);
-            } else if (rand < 0.75) {
+            } else if (rand < 0.8) {
                 const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
                 setEntities((prev) => [
                     ...prev,
@@ -130,11 +118,13 @@ export default function Fase4({ onNext, idJogador }) {
             }
         }, 2500);
 
+        // ⏳ Contagem regressiva
         timerRef.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
                     clearInterval(timerRef.current);
                     clearInterval(spawnRef.current);
+                    clearInterval(cenaTimerRef.current);
                     setRunning(false);
                     setFinished(true);
                     return 0;
@@ -144,37 +134,54 @@ export default function Fase4({ onNext, idJogador }) {
         }, 1000);
     };
 
+    // 🌀 Movimento dos obstáculos
     useEffect(() => {
         if (!running) return;
         const loop = setInterval(() => {
-            setEntities((prev) =>
-                prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -150)
-            );
+            setEntities((prev) => prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -150));
         }, 30);
         return () => clearInterval(loop);
     }, [running]);
 
+    // 💥 Colisões e pontuação
     useEffect(() => {
         if (!running) return;
         const check = setInterval(() => {
+            if (isJumping) return;
+
             setEntities((prev) => {
                 const next = [];
                 prev.forEach((e) => {
-                    const collided = e.x < 250 && e.x > 150 && positionY < 80;
-                    if (collided) {
+                    const charX = 200;
+                    const charW = 100;
+                    const collided = e.x < charX + charW && e.x + 60 > charX && positionY < 100;
+
+                    if (collided && !e.hit) {
+                        e.hit = true;
+
                         if (e.type === "word") {
                             if (e.text === cenaAtual.correta) {
-                                setScore((s) => s + 15);
+                                setScore((s) => s + 10);
+                                setFlashColor("green");
+                                addFloatingScore("+10", "green");
                                 setCenaAtual(cenas[Math.floor(Math.random() * cenas.length)]);
                             } else {
                                 setScore((s) => Math.max(0, s - 5));
+                                setFlashColor("red");
+                                addFloatingScore("-5", "red");
                             }
                         } else if (e.type === "star" || e.type === "heart") {
                             setScore((s) => s + (e.points || 10));
+                            setFlashColor("green");
+                            addFloatingScore(`+${e.points}`, "yellow");
                         } else {
                             setScore((s) => Math.max(0, s - 10));
+                            setFlashColor("red");
+                            addFloatingScore("-10", "red");
                         }
-                    } else {
+
+                        setTimeout(() => setFlashColor(""), 300);
+                    } else if (!collided) {
                         next.push(e);
                     }
                 });
@@ -182,14 +189,22 @@ export default function Fase4({ onNext, idJogador }) {
             });
         }, 100);
         return () => clearInterval(check);
-    }, [running, positionY, cenaAtual]);
+    }, [running, positionY, cenaAtual, isJumping]);
 
+    // ✨ Pontos flutuantes
+    const addFloatingScore = (text, color) => {
+        const id = `${Date.now()}-${Math.random()}`;
+        setFloatingScores((prev) => [...prev, { id, text, color }]);
+        setTimeout(() => setFloatingScores((prev) => prev.filter((f) => f.id !== id)), 1000);
+    };
+
+    // 🦘 Pulo
     const handleJump = () => {
         if (!running || isJumping) return;
         setIsJumping(true);
-        setPositionY(150);
-        setTimeout(() => setPositionY(0), 500);
-        setTimeout(() => setIsJumping(false), 800);
+        setPositionY(220);
+        setTimeout(() => setPositionY(0), 700);
+        setTimeout(() => setIsJumping(false), 900);
     };
 
     useEffect(() => {
@@ -204,6 +219,7 @@ export default function Fase4({ onNext, idJogador }) {
 
     useEffect(() => {
         if (finished) {
+            clearInterval(cenaTimerRef.current);
             setShowRecompensa(true);
             const t = setTimeout(() => {
                 setShowRecompensa(false);
@@ -221,6 +237,14 @@ export default function Fase4({ onNext, idJogador }) {
     return (
         <div className="runner-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg4})` }} />
+            {flashColor && <div className={`flash-overlay ${flashColor}`} />}
+
+            {floatingScores.map((f) => (
+                <div key={f.id} className={`floating-score ${f.color}`}>
+                    {f.text}
+                </div>
+            ))}
+
             <div className="logo-top"><img src={logo} alt="Logo" /></div>
 
             {!finished && (
@@ -254,7 +278,7 @@ export default function Fase4({ onNext, idJogador }) {
                     {!running && !showSelector && <div className="hint">Clique para começar a Fase 4</div>}
 
                     {showSelector && (
-                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} />
+                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} onClose={() => setShowSelector(false)} />
                     )}
                 </>
             )}
@@ -262,6 +286,8 @@ export default function Fase4({ onNext, idJogador }) {
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_4" />}
 
+
+            <Ranking />
             <Credito />
         </div>
     );

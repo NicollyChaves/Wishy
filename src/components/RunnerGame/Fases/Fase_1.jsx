@@ -20,6 +20,7 @@ import CardPontuacao from "../../CardPontuacao/CardPontuacao";
 import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
+import Ranking from "../../Ranking/Ranking";
 
 const words = [
   { img: "🐱", word: "Gato", correct: "G" },
@@ -286,6 +287,8 @@ export default function Fase1({ onNext, idJogador }) {
       {showRecompensa && <Recompensa pontuacao={score} />}
       {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_1" />}
 
+
+      <Ranking />
       <Credito />
     </div>
   );

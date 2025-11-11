@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_2.css";
 
-import bg2 from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg"; // pode trocar a imagem de fundo
+import bg2 from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
 import logo from "../../../assets/imagens/runner/Logo_2.png";
 import char1 from "../../../assets/imagens/runner/character1.gif";
 import char2 from "../../../assets/imagens/runner/character2.gif";
@@ -21,6 +21,7 @@ import CardPontuacao from "../../CardPontuacao/CardPontuacao";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
+import Ranking from "../../Ranking/Ranking";
 
 const words = [
     { word: "SOL" },
@@ -29,6 +30,8 @@ const words = [
     { word: "MAÇÃ" },
     { word: "GATO" },
 ];
+
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÇÃ".split(""); // inclui Ç e Ã
 
 const obstacles = [
     { type: "tree", img: tree },
@@ -49,12 +52,14 @@ export default function Fase2({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(5);
+    const [timeLeft, setTimeLeft] = useState(90);
     const [currentWord, setCurrentWord] = useState(words[0]);
     const [collectedLetters, setCollectedLetters] = useState([]);
-    const [charPosX, setCharPosX] = useState(100);
+    const [charPosX] = useState(100);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
+    const [flashColor, setFlashColor] = useState("");
+    const [floatingScores, setFloatingScores] = useState([]);
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
@@ -77,19 +82,17 @@ export default function Fase2({ onNext, idJogador }) {
         setFinished(false);
         setShowRecompensa(false);
         setShowFeedback(false);
-        setCurrentWord(words[Math.floor(Math.random() * words.length)]);
         setCollectedLetters([]);
-        setCharPosX(100);
+        setCurrentWord(words[Math.floor(Math.random() * words.length)]);
 
+        // gerar entidades (letras, obstáculos e bônus)
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
             if (rand < 0.5) {
-                // gera letras da palavra atual
-                const letters = currentWord.word.split("");
-                const char = letters[Math.floor(Math.random() * letters.length)];
+                const randomChar = alphabet[Math.floor(Math.random() * alphabet.length)];
                 setEntities((prev) => [
                     ...prev,
-                    { id: Date.now() + Math.random(), type: "letter", char, x: 1000, y: 0 },
+                    { id: Date.now() + Math.random(), type: "letter", char: randomChar, x: 1000, y: 0 },
                 ]);
             } else if (rand < 0.75) {
                 const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
@@ -106,6 +109,7 @@ export default function Fase2({ onNext, idJogador }) {
             }
         }, 2500);
 
+        // cronômetro
         timerRef.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
@@ -120,32 +124,43 @@ export default function Fase2({ onNext, idJogador }) {
         }, 1000);
     };
 
-    // troca a palavra a cada 20s
+    // troca automática da palavra a cada 15 segundos
     useEffect(() => {
         if (running) {
             wordTimerRef.current = setInterval(() => {
                 const nextWord = words[Math.floor(Math.random() * words.length)];
                 setCurrentWord(nextWord);
                 setCollectedLetters([]);
-            }, 20000);
+            }, 15000);
         }
         return () => clearInterval(wordTimerRef.current);
     }, [running]);
 
-    // movimento
+    // troca a palavra se o jogador completar todas as letras
+    useEffect(() => {
+        if (running && collectedLetters.length >= new Set(currentWord.word).size) {
+            const nextWord = words[Math.floor(Math.random() * words.length)];
+            setCurrentWord(nextWord);
+            setCollectedLetters([]);
+        }
+    }, [collectedLetters, running]);
+
+    // movimentação dos elementos (personagem fixo)
     useEffect(() => {
         if (!running) return;
         const loop = setInterval(() => {
-            setCharPosX((x) => Math.min(x + 0.5, 300));
-            setEntities((prev) => prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -120));
+            setEntities((prev) =>
+                prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -120)
+            );
         }, 30);
         return () => clearInterval(loop);
     }, [running]);
 
-    // colisões
+    // 💥 colisões + flashes + pontuação flutuante
     useEffect(() => {
         if (!running) return;
         const check = setInterval(() => {
+            if (isJumping) return;
             setEntities((prev) => {
                 const next = [];
                 prev.forEach((e) => {
@@ -158,23 +173,35 @@ export default function Fase2({ onNext, idJogador }) {
                         e.x + entW > charPosX &&
                         e.y < positionY + charHeight &&
                         e.y + entH > positionY;
-                    if (collided) {
+
+                    if (collided && !e.hit) {
+                        e.hit = true;
+
                         if (e.type === "letter") {
                             if (currentWord.word.includes(e.char)) {
-                                // letra correta
-                                setCollectedLetters((c) => [...c, e.char]);
-                                setScore((s) => s + 10);
+                                if (!collectedLetters.includes(e.char)) {
+                                    setCollectedLetters((c) => [...c, e.char]);
+                                    setScore((s) => s + 10);
+                                    setFlashColor("green");
+                                    addFloatingScore("+10", "green");
+                                }
                             } else {
-                                // letra não faz parte da palavra atual
                                 setScore((s) => Math.max(0, s - 5));
+                                setFlashColor("red");
+                                addFloatingScore("-5", "red");
                             }
                         } else if (e.type === "star" || e.type === "heart") {
                             setScore((s) => s + (e.points || 10));
+                            setFlashColor("green");
+                            addFloatingScore(`+${e.points}`, "yellow");
                         } else {
-                            // obstáculos só tiram pontos
                             setScore((s) => Math.max(0, s - 10));
+                            setFlashColor("red");
+                            addFloatingScore("-10", "red");
                         }
-                    } else {
+
+                        setTimeout(() => setFlashColor(""), 300);
+                    } else if (!collided) {
                         next.push(e);
                     }
                 });
@@ -182,14 +209,24 @@ export default function Fase2({ onNext, idJogador }) {
             });
         }, 100);
         return () => clearInterval(check);
-    }, [running, positionY, charPosX, currentWord]);
+    }, [running, positionY, charPosX, currentWord, isJumping, collectedLetters]);
 
+    // 🌀 animação da pontuação flutuante
+    const addFloatingScore = (text, color) => {
+        const id = `${Date.now()}-${Math.random()}`;
+        setFloatingScores((prev) => [...prev, { id, text, color }]);
+        setTimeout(() => {
+            setFloatingScores((prev) => prev.filter((f) => f.id !== id));
+        }, 1000);
+    };
+
+    // 🦘 pulo igual da Fase 1
     const handleJump = () => {
         if (!running || isJumping) return;
         setIsJumping(true);
-        setPositionY(150);
-        setTimeout(() => setPositionY(0), 500);
-        setTimeout(() => setIsJumping(false), 800);
+        setPositionY(220);
+        setTimeout(() => setPositionY(0), 700);
+        setTimeout(() => setIsJumping(false), 900);
     };
 
     useEffect(() => {
@@ -202,6 +239,7 @@ export default function Fase2({ onNext, idJogador }) {
         };
     });
 
+    // fim da fase
     useEffect(() => {
         if (finished) {
             setShowRecompensa(true);
@@ -221,7 +259,18 @@ export default function Fase2({ onNext, idJogador }) {
     return (
         <div className="runner2-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg2})` }} />
-            <div className="logo-top"><img src={logo} alt="Logo" /></div>
+
+            {flashColor && <div className={`flash-overlay ${flashColor}`} />}
+
+            {floatingScores.map((f) => (
+                <div key={f.id} className={`floating-score ${f.color}`}>
+                    {f.text}
+                </div>
+            ))}
+
+            <div className="logo-top">
+                <img src={logo} alt="Logo" />
+            </div>
 
             {!finished && (
                 <>
@@ -229,7 +278,9 @@ export default function Fase2({ onNext, idJogador }) {
                         <>
                             <div className="current-word">
                                 {currentWord.word.split("").map((l, i) => (
-                                    <span key={i} className={collectedLetters.includes(l) ? "collected" : ""}>{l}</span>
+                                    <span key={i} className={collectedLetters.includes(l) ? "collected" : ""}>
+                                        {l}
+                                    </span>
                                 ))}
                             </div>
                             <CardPontuacao score={score} />
@@ -248,21 +299,39 @@ export default function Fase2({ onNext, idJogador }) {
 
                     {running &&
                         entities.map((e) => (
-                            <div key={e.id} className={`entity ${e.type}`} style={{ left: `${e.x}px`, bottom: `${20 + e.y}px` }}>
-                                {e.type === "letter" ? <span className="letter-char">{e.char}</span> : <img src={e.img} alt={e.type} />}
+                            <div
+                                key={e.id}
+                                className={`entity ${e.type}`}
+                                style={{ left: `${e.x}px`, bottom: `${20 + e.y}px` }}
+                            >
+                                {e.type === "letter" ? (
+                                    <span className="letter-char">{e.char}</span>
+                                ) : (
+                                    <img src={e.img} alt={e.type} />
+                                )}
                             </div>
                         ))}
 
-                    {!running && !showSelector && <div className="hint">Clique para começar a Fase 2</div>}
+                    {!running && !showSelector && (
+                        <div className="hint">Clique para começar a Fase 2</div>
+                    )}
 
                     {showSelector && (
-                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} onClose={() => setShowSelector(false)} />
+                        <EscolherPersonagem
+                            personagens={personagens}
+                            onChoose={handleCharacterChoose}
+                            onClose={() => setShowSelector(false)}
+                        />
                     )}
                 </>
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
-            {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_2" />}
+            {showFeedback && (
+                <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_2" />
+            )}
+
+            <Ranking />
             <Credito />
         </div>
     );

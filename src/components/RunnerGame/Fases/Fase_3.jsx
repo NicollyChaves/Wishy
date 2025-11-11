@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_3.css";
 
-import bg3 from "../../../assets/imagens/runner/Plano_fundo_3.jpg";
+import bg3 from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
 import logo from "../../../assets/imagens/runner/Logo_2.png";
 
 import char1 from "../../../assets/imagens/runner/character1.gif";
@@ -22,8 +22,9 @@ import CardPontuacao from "../../CardPontuacao/CardPontuacao";
 import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
+import Ranking from "../../Ranking/Ranking";
 
-// Sons (coloque seus arquivos em src/assets/sounds)
+// Sons
 import somBola from "../../../assets/sounds/Bola.mp3";
 import somFoca from "../../../assets/sounds/Foca.mp3";
 import somLata from "../../../assets/sounds/Lata.mp3";
@@ -55,15 +56,18 @@ export default function Fase3({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(5);
-    const [letraCorreta, setLetraCorreta] = useState("");
+    const [timeLeft, setTimeLeft] = useState(30);
+    const [flashColor, setFlashColor] = useState("");
+    const [floatingScores, setFloatingScores] = useState([]);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
+    const [letraCorreta, setLetraCorreta] = useState("");
     const [somAtual, setSomAtual] = useState(null);
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
     const somAtualRef = useRef(null);
+    const charPosX = 100;
 
     const personagens = [
         { name: "Lulix", src: char1 },
@@ -73,20 +77,15 @@ export default function Fase3({ onNext, idJogador }) {
         { name: "Zuppy", src: char5 },
     ];
 
-    // 🔊 Tocar som com segurança
+    // 🔊 Tocar som
     const tocarSom = (src) => {
-        if (somAtualRef.current) {
-            somAtualRef.current.pause();
-        }
+        if (somAtualRef.current) somAtualRef.current.pause();
         const audio = new Audio(src);
         somAtualRef.current = audio;
-        audio.play().catch(() => {
-            console.log("Usuário precisa clicar para permitir o som 🎧");
-        });
+        audio.play().catch(() => console.log("Clique para permitir o som 🎧"));
         setSomAtual(src);
     };
 
-    // Sorteia um novo som e letra
     const tocarSomAleatorio = () => {
         const p = palavras[Math.floor(Math.random() * palavras.length)];
         setLetraCorreta(p.letraCorreta);
@@ -98,14 +97,12 @@ export default function Fase3({ onNext, idJogador }) {
         setRunning(true);
         setScore(0);
         setEntities([]);
-        setTimeLeft(90);
+        setTimeLeft(30);
         setFinished(false);
         setShowRecompensa(false);
         setShowFeedback(false);
-
         tocarSomAleatorio();
 
-        // Gera entidades
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
             if (rand < 0.5) {
@@ -128,9 +125,8 @@ export default function Fase3({ onNext, idJogador }) {
                     { id: Date.now() + Math.random(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 },
                 ]);
             }
-        }, 2300);
+        }, 2500);
 
-        // Contagem regressiva
         timerRef.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
@@ -145,7 +141,7 @@ export default function Fase3({ onNext, idJogador }) {
         }, 1000);
     };
 
-    // Movimento das entidades
+    // Movimento
     useEffect(() => {
         if (!running) return;
         const loop = setInterval(() => {
@@ -156,35 +152,49 @@ export default function Fase3({ onNext, idJogador }) {
         return () => clearInterval(loop);
     }, [running]);
 
-    // Detecção de colisões
+    // 🎯 Colisões
     useEffect(() => {
         if (!running) return;
         const check = setInterval(() => {
+            if (isJumping) return;
+
             setEntities((prev) => {
                 const next = [];
                 prev.forEach((e) => {
                     const charWidth = 120;
                     const entW = e.type === "letter" ? 60 : 80;
                     const collided =
-                        e.x < 200 + charWidth &&
-                        e.x + entW > 200 &&
+                        e.x < charPosX + charWidth &&
+                        e.x + entW > charPosX &&
                         e.y < positionY + 120 &&
-                        e.y + 60 > positionY;
+                        e.y + 80 > positionY;
 
-                    if (collided) {
+                    if (collided && !e.hit) {
+                        e.hit = true;
+
                         if (e.type === "letter") {
                             if (e.char === letraCorreta) {
                                 setScore((s) => s + 10);
-                                tocarSomAleatorio(); // toca próximo som
+                                setFlashColor("green");
+                                addFloatingScore("+10", "green");
+                                tocarSomAleatorio();
                             } else {
                                 setScore((s) => Math.max(0, s - 5));
+                                setFlashColor("red");
+                                addFloatingScore("-5", "red");
                             }
                         } else if (e.type === "star" || e.type === "heart") {
                             setScore((s) => s + (e.points || 10));
+                            setFlashColor("green");
+                            addFloatingScore(`+${e.points}`, "yellow");
                         } else {
                             setScore((s) => Math.max(0, s - 10));
+                            setFlashColor("red");
+                            addFloatingScore("-10", "red");
                         }
-                    } else {
+
+                        setTimeout(() => setFlashColor(""), 300);
+                    } else if (!collided) {
                         next.push(e);
                     }
                 });
@@ -192,15 +202,22 @@ export default function Fase3({ onNext, idJogador }) {
             });
         }, 100);
         return () => clearInterval(check);
-    }, [running, positionY, letraCorreta]);
+    }, [running, positionY, letraCorreta, isJumping]);
 
-    // Pular
+    const addFloatingScore = (text, color) => {
+        const id = `${Date.now()}-${Math.random()}`;
+        setFloatingScores((prev) => [...prev, { id, text, color }]);
+        setTimeout(() => {
+            setFloatingScores((prev) => prev.filter((f) => f.id !== id));
+        }, 1000);
+    };
+
     const handleJump = () => {
         if (!running || isJumping) return;
         setIsJumping(true);
-        setPositionY(150);
-        setTimeout(() => setPositionY(0), 500);
-        setTimeout(() => setIsJumping(false), 800);
+        setPositionY(220);
+        setTimeout(() => setPositionY(0), 700);
+        setTimeout(() => setIsJumping(false), 900);
     };
 
     useEffect(() => {
@@ -213,7 +230,6 @@ export default function Fase3({ onNext, idJogador }) {
         };
     });
 
-    // Finalização
     useEffect(() => {
         if (finished) {
             setShowRecompensa(true);
@@ -230,7 +246,6 @@ export default function Fase3({ onNext, idJogador }) {
         setShowSelector(false);
     };
 
-    // 🔊 Botão "Ouvir Som Novamente"
     const handleRepetirSom = () => {
         if (somAtual) tocarSom(somAtual);
     };
@@ -238,6 +253,15 @@ export default function Fase3({ onNext, idJogador }) {
     return (
         <div className="runner-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg3})` }} />
+
+            {flashColor && <div className={`flash-overlay ${flashColor}`} />}
+
+            {floatingScores.map((f) => (
+                <div key={f.id} className={`floating-score ${f.color}`}>
+                    {f.text}
+                </div>
+            ))}
+
             <div className="logo-top"><img src={logo} alt="Logo" /></div>
 
             {!finished && (
@@ -246,7 +270,9 @@ export default function Fase3({ onNext, idJogador }) {
                         <>
                             <CardPontuacao score={score} />
                             <BarraTempo timeLeft={timeLeft} />
-                            <div className="letra-indicada">
+
+                            {/* 🔊 Botão centralizado no topo */}
+                            <div className="btn-repetir-topo">
                                 <button className="btn-repetir" onClick={handleRepetirSom}>
                                     🔊 Ouvir Som
                                 </button>
@@ -257,7 +283,7 @@ export default function Fase3({ onNext, idJogador }) {
                     {character && (
                         <div
                             className={`character-wrap ${isJumping ? "jumping" : ""}`}
-                            style={{ left: `200px`, bottom: `${20 + positionY}px` }}
+                            style={{ left: `${charPosX}px`, bottom: `${20 + positionY}px` }}
                         >
                             <img src={character.src} alt={character.name} className="character" />
                         </div>
@@ -281,6 +307,7 @@ export default function Fase3({ onNext, idJogador }) {
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_3" />}
 
+            <Ranking />
             <Credito />
         </div>
     );

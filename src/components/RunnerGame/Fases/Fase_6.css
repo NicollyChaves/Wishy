@@ -150,3 +150,17 @@
     border-radius: 12px;
     font-weight: bold;
 }
+
+.frase-display {
+    font-size: 26px;
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px #000;
+}
+
+.frase-display.highlighted {
+    color: yellow;
+    transition: color 0.3s ease;
+}

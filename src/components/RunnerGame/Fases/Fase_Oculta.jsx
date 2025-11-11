@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_Oculta.css";
-import Ranking from "../../Ranking/Ranking";
 
 import bgForest from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
 import char1 from "../../../assets/imagens/runner/character1.gif";
@@ -21,6 +20,8 @@ import CardPontuacao from "../../CardPontuacao/CardPontuacao";
 import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
+import Manual_Fase_Oculta from "../Manuais/Manual_Fase_Oculta";
+import Ranking from "../../Ranking/Ranking";
 
 const creatures = [
     { img: "🧚‍♀️", name: "Fada" },
@@ -49,15 +50,14 @@ export default function FaseOculta({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(100);
+    const [timeLeft, setTimeLeft] = useState(30);
     const [currentCreature, setCurrentCreature] = useState(creatures[0]);
-    const [charPosX, setCharPosX] = useState(100);
+    const [charPosX] = useState(100);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
     const [flashColor, setFlashColor] = useState("");
     const [floatingScores, setFloatingScores] = useState([]);
-
-    const [showRanking, setShowRanking] = useState(false);
+    const [showManual, setShowManual] = useState(true);
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
@@ -71,38 +71,28 @@ export default function FaseOculta({ onNext, idJogador }) {
         { name: "Zuppy", src: char5 },
     ];
 
-    // 🚀 Iniciar fase
+    // 🚀 Inicia fase
     const handleStart = () => {
-        if (running) {
-            console.log("⚠️ A fase já está em execução, ignorando novo clique...");
-            return;
-        }
-        if (!character) {
-            console.warn("⚠️ Nenhum personagem selecionado — a fase não pode iniciar!");
-            return;
-        }
-
-        console.log("🌿 Iniciando Fase Oculta...");
+        if (running || !character) return;
         setRunning(true);
         setScore(0);
         setEntities([]);
-        setTimeLeft(100);
+        setTimeLeft(90);
         setFinished(false);
         setShowRecompensa(false);
         setShowFeedback(false);
         setCurrentCreature(creatures[Math.floor(Math.random() * creatures.length)]);
-        setCharPosX(100);
 
-        // 🌿 Spawner de entidades
+        // Gera entidades
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
-            if (rand < 0.4) {
+            if (rand < 0.5) {
                 const random = creatures[Math.floor(Math.random() * creatures.length)];
                 setEntities((prev) => [
                     ...prev,
                     { id: Date.now() + Math.random(), type: "creature", char: random.img, x: 1000, y: 0 },
                 ]);
-            } else if (rand < 0.7) {
+            } else if (rand < 0.8) {
                 const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
                 setEntities((prev) => [
                     ...prev,
@@ -117,13 +107,13 @@ export default function FaseOculta({ onNext, idJogador }) {
             }
         }, 2000);
 
-        // 🕓 Temporizador da fase
+        // Contagem regressiva
         timerRef.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
-                    console.log("⏰ Tempo esgotado! Encerrando fase...");
                     clearInterval(timerRef.current);
                     clearInterval(spawnRef.current);
+                    clearInterval(emojiTimerRef.current);
                     setRunning(false);
                     setFinished(true);
                     return 0;
@@ -133,57 +123,74 @@ export default function FaseOculta({ onNext, idJogador }) {
         }, 1000);
     };
 
-    // 🧚‍♀️ Alterna criaturas
+    // 🧚 Alterna criatura a cada 15s
     useEffect(() => {
         if (running) {
             emojiTimerRef.current = setInterval(() => {
                 setCurrentCreature(creatures[Math.floor(Math.random() * creatures.length)]);
-            }, 20000);
+            }, 15000);
         }
         return () => clearInterval(emojiTimerRef.current);
     }, [running]);
 
-    // 🎮 Loop do movimento
+    // 🎮 Movimento dos obstáculos
     useEffect(() => {
         if (!running) return;
         const loop = setInterval(() => {
-            setCharPosX((x) => Math.min(x + 0.6, 350));
-            setEntities((prev) =>
-                prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -120)
-            );
+            setEntities((prev) => prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -120));
         }, 30);
         return () => clearInterval(loop);
     }, [running]);
 
-    // ⚡ Colisões
+    // ⚡ Colisões + Flash + Score flutuante
     useEffect(() => {
         if (!running) return;
         const check = setInterval(() => {
+            if (isJumping) return;
+
             setEntities((prev) => {
                 const next = [];
                 prev.forEach((e) => {
                     const charWidth = 120;
                     const charHeight = 120;
-                    const entW = e.type === "creature" ? 60 : 80;
-                    const entH = e.type === "creature" ? 60 : 80;
+                    const entW = 70;
+                    const entH = 70;
                     const collided =
                         e.x < charPosX + charWidth &&
                         e.x + entW > charPosX &&
                         e.y < positionY + charHeight &&
                         e.y + entH > positionY;
 
-                    if (collided) {
+                    if (collided && !e.hit) {
+                        e.hit = true;
+
                         if (e.type === "creature") {
-                            setScore((s) => s + 15);
-                            addFloatingScore("+15", "green");
+                            // ✅ Acertou o mesmo emoji do topo
+                            if (e.char === currentCreature.img) {
+                                setScore((s) => s + 20);
+                                setFlashColor("green");
+                                addFloatingScore("+20", "green");
+
+                                // troca o emoji do topo ao acertar
+                                setCurrentCreature(creatures[Math.floor(Math.random() * creatures.length)]);
+                            } else {
+                                // ❌ Pegou emoji errado
+                                setScore((s) => Math.max(0, s - 10));
+                                setFlashColor("red");
+                                addFloatingScore("-10", "red");
+                            }
                         } else if (e.type === "star" || e.type === "heart") {
                             setScore((s) => s + (e.points || 10));
+                            setFlashColor("yellow");
                             addFloatingScore(`+${e.points}`, "yellow");
                         } else {
-                            setScore((s) => Math.max(0, s - 5));
-                            addFloatingScore("-5", "red");
+                            setScore((s) => Math.max(0, s - 10));
+                            setFlashColor("red");
+                            addFloatingScore("-10", "red");
                         }
-                    } else {
+
+                        setTimeout(() => setFlashColor(""), 300);
+                    } else if (!collided) {
                         next.push(e);
                     }
                 });
@@ -191,24 +198,22 @@ export default function FaseOculta({ onNext, idJogador }) {
             });
         }, 100);
         return () => clearInterval(check);
-    }, [running, positionY, charPosX]);
+    }, [running, positionY, charPosX, isJumping, currentCreature]);
 
     // ✨ Pontuação flutuante
     const addFloatingScore = (text, color) => {
-        const id = Date.now();
+        const id = `${Date.now()}-${Math.random()}`;
         setFloatingScores((prev) => [...prev, { id, text, color }]);
-        setTimeout(() => {
-            setFloatingScores((prev) => prev.filter((f) => f.id !== id));
-        }, 1000);
+        setTimeout(() => setFloatingScores((prev) => prev.filter((f) => f.id !== id)), 1000);
     };
 
     // 🕹️ Pulo
     const handleJump = () => {
         if (!running || isJumping) return;
         setIsJumping(true);
-        setPositionY(150);
-        setTimeout(() => setPositionY(0), 500);
-        setTimeout(() => setIsJumping(false), 800);
+        setPositionY(200);
+        setTimeout(() => setPositionY(0), 700);
+        setTimeout(() => setIsJumping(false), 900);
     };
 
     // ⌨️ Controles
@@ -222,14 +227,12 @@ export default function FaseOculta({ onNext, idJogador }) {
         };
     });
 
-    // 💾 Salvar pontuação no banco
+    // 💾 Salvamento pontuação
     useEffect(() => {
         if (finished && idJogador) {
-            console.log(`🏁 Fase concluída! Salvando pontuação... (Jogador: ${idJogador}, Pontos: ${score})`);
-
             const saveScore = async () => {
                 try {
-                    const response = await fetch("http://localhost:5000/api/jogadores/pontuacao", {
+                    await fetch("http://localhost:5000/api/jogadores/pontuacao", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -238,17 +241,10 @@ export default function FaseOculta({ onNext, idJogador }) {
                             pontuacao: score,
                         }),
                     });
-
-                    if (!response.ok) {
-                        console.error(`❌ Erro ao salvar pontuação: ${response.statusText}`);
-                    } else {
-                        console.log("✅ Pontuação salva com sucesso no servidor!");
-                    }
                 } catch (error) {
-                    console.error("🚫 Erro de conexão com o servidor:", error);
+                    console.error("Erro ao salvar pontuação:", error);
                 }
             };
-
             saveScore();
 
             setShowRecompensa(true);
@@ -257,47 +253,29 @@ export default function FaseOculta({ onNext, idJogador }) {
                 setShowFeedback(true);
             }, 4000);
             return () => clearTimeout(t);
-        } else if (finished && !idJogador) {
-            console.warn("⚠️ Fase finalizada, mas nenhum 'idJogador' foi fornecido! A pontuação não será salva.");
         }
     }, [finished, idJogador, score]);
 
     const handleCharacterChoose = (char) => {
-        console.log(`🎨 Personagem escolhido: ${char.name}`);
         setCharacter(char);
         setShowSelector(false);
     };
-
-    useEffect(() => {
-        if (finished) {
-            setShowRecompensa(true);
-            const t = setTimeout(() => {
-                setShowRecompensa(false);
-                setShowFeedback(true);
-            }, 4000);
-            return () => clearTimeout(t);
-        }
-    }, [finished]);
-
-    // 🔹 Quando Feedback terminar (ex: após clicar “Próxima Fase”), abrir o Ranking
-    const handleNext = () => {
-        setShowFeedback(false);
-        setShowRanking(true);
-    };
-
 
     return (
         <div className="runner-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bgForest})` }} />
 
             {flashColor && <div className={`flash-overlay ${flashColor}`} />}
+
             {floatingScores.map((f) => (
                 <div key={f.id} className={`floating-score ${f.color}`}>
                     {f.text}
                 </div>
             ))}
 
-            <div className="logo-top"><img src={logo} alt="Logo" /></div>
+            <div className="logo-top">
+                <img src={logo} alt="Logo" />
+            </div>
 
             {!finished && (
                 <>
@@ -321,33 +299,35 @@ export default function FaseOculta({ onNext, idJogador }) {
                     {running &&
                         entities.map((e) => (
                             <div key={e.id} className={`entity ${e.type}`} style={{ left: `${e.x}px`, bottom: `${20 + e.y}px` }}>
-                                {e.type === "creature" ? <span className="letter-char">{e.char}</span> : <img src={e.img} alt={e.type} />}
+                                {e.type === "creature" ? (
+                                    <span className="letter-char">{e.char}</span>
+                                ) : (
+                                    <img src={e.img} alt={e.type} />
+                                )}
                             </div>
                         ))}
 
                     {!running && !showSelector && <div className="hint">Clique para iniciar a Fase Oculta 🌿</div>}
 
-                    {showSelector && (
-                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} onClose={() => setShowSelector(false)} />
+                    {showManual ? (
+                        <Manual_Fase_Oculta onStart={() => setShowManual(false)} />
+                    ) : (
+                        showSelector && (
+                            <EscolherPersonagem
+                                personagens={personagens}
+                                onChoose={handleCharacterChoose}
+                                onClose={() => setShowSelector(false)}
+                            />
+                        )
                     )}
                 </>
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
-            {showFeedback && <Feedback pontuacao={score} onNext={() => {
-                console.log("🏁 Exibindo ranking antes de avançar...");
-                setShowFeedback(false);
-                setShowRanking(true);
-                // ⏳ Depois de 5 segundos, chama o onNext() real
-                setTimeout(() => {
-                    try {
-                        onNext();
-                    } catch (err) {
-                        console.error("❌ Erro ao chamar onNext:", err);
-                    }
-                }, 5000);
-            }} idJogador={idJogador} fase="fase_oculta" />}
-            {showRanking && <Ranking onClose={() => setShowRanking(false)} />}
+            {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_oculta" />}
+
+
+            <Ranking />
             <Credito />
         </div>
     );

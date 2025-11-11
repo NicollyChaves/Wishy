@@ -92,15 +92,10 @@ export const salvarPontuacao = (req, res) => {
 
 // 🔹 Retorna o ranking Top 10 geral
 export const rankingTop10 = (req, res) => {
-  console.log("📊 Requisição recebida para buscar o ranking Top 10.");
-
   listarTop10((err, resultados) => {
     if (err) {
-      console.error("💥 Erro ao buscar ranking Top 10:", err);
-      return res.status(500).json({ erro: err.message || err });
+      return res.status(500).json({ error: 'Erro ao buscar ranking do servidor' });
     }
-
-    console.log("✅ Ranking Top 10 retornado com sucesso!");
     res.json(resultados);
   });
 };

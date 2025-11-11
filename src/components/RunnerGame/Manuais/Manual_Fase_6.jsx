@@ -101,7 +101,7 @@ export default function Manual_Fase_6({ onStart }) {
                 <section className="manual-section">
                     <h3>⏱️ Tempo</h3>
                     <p>
-                        Você terá <b>90 segundos</b> para completar o máximo de frases possíveis!
+                        Você terá <b>30 segundos</b> para completar o máximo de frases possíveis!
                         Mostre sua atenção e boa leitura! 📖💪
                     </p>
                 </section>

@@ -22,34 +22,76 @@ import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Recompensa from "../../Recompensa/Recompensa";
 import Feedback from "../../Feedback/Feedback";
 import Credito from "../../creditos/Creditos";
+import Ranking from "../../Ranking/Ranking";
 
-// Frases com opções de resposta
+// 🧠 Frases com opções de resposta e áudio
 const frases = [
-    { texto: "O gato correu para a ___", correta: "🏠", opcoes: ["🏠", "🌳", "🪣"] },
-    { texto: "A foca nada no ___", correta: "🌊", opcoes: ["🌊", "🏜️", "☁️"] },
-    { texto: "O galo canta no ___", correta: "🌅", opcoes: ["🌅", "🌙", "🏞️"] },
-    { texto: "A borboleta voa no ___", correta: "🌼", opcoes: ["🌼", "🍎", "🪵"] },
-    { texto: "O menino comeu uma ___", correta: "🍎", opcoes: ["🍎", "🪨", "🌲"] },
+    {
+        texto: "O gato correu para ___",
+        correta: "🏠",
+        opcoes: ["🏠", "🌳", "🪣"],
+        audio: "/audios/frases/fase6_gato.mp3",
+    },
+    {
+        texto: "A foca nada no ___",
+        correta: "🌊",
+        opcoes: ["🌊", "🏜️", "☁️"],
+        audio: "/audios/frases/fase6_foca.mp3",
+    },
+    {
+        texto: "O galo canta no ___",
+        correta: "🌅",
+        opcoes: ["🌅", "🌙", "🏞️"],
+        audio: "/audios/frases/fase6_galo.mp3",
+    },
+    {
+        texto: "A borboleta voa na ___",
+        correta: "🌼",
+        opcoes: ["🌼", "🍎", "🪵"],
+        audio: "/audios/frases/fase6_borboleta.mp3",
+    },
+    {
+        texto: "O menino comeu uma ___",
+        correta: "🍎",
+        opcoes: ["🍎", "🪨", "🌲"],
+        audio: "/audios/frases/fase6_menino.mp3",
+    },
+];
+
+const obstacles = [
+    { type: "rock", img: rock },
+    { type: "mushroom", img: mushroom },
+];
+
+const bonuses = [
+    { type: "star", img: star, points: 15 },
+    { type: "heart", img: heart, points: 20 },
 ];
 
 export default function Fase6({ onNext, idJogador }) {
     const [running, setRunning] = useState(false);
     const [character, setCharacter] = useState(null);
     const [score, setScore] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(5);
+    const [timeLeft, setTimeLeft] = useState(30);
+    const [positionY, setPositionY] = useState(0);
+    const [isJumping, setIsJumping] = useState(false);
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
     const [currentFrase, setCurrentFrase] = useState(frases[0]);
+    const [completed, setCompleted] = useState(false);
+    const [highlighted, setHighlighted] = useState(false);
+
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
+    const [floatingScores, setFloatingScores] = useState([]);
+    const [flashColor, setFlashColor] = useState("");
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
     const fraseTimerRef = useRef(null);
-    const [charPosX, setCharPosX] = useState(100);
-    const [positionY, setPositionY] = useState(0);
-    const [isJumping, setIsJumping] = useState(false);
+
+    const charPosX = 100;
 
     const personagens = [
         { name: "Lulix", src: char1 },
@@ -59,108 +101,155 @@ export default function Fase6({ onNext, idJogador }) {
         { name: "Zuppy", src: char5 },
     ];
 
-    // Inicia a fase
+    // 🔄 Função para trocar a frase
+    const trocarFrase = () => {
+        const novaFrase = frases[Math.floor(Math.random() * frases.length)];
+        setCurrentFrase(novaFrase);
+        setCompleted(false);
+        setHighlighted(false);
+    };
+
+    // 🟢 Iniciar fase
     const handleStart = () => {
         if (running || !character) return;
         setRunning(true);
         setScore(0);
-        setTimeLeft(60);
+        setTimeLeft(90);
         setEntities([]);
         setFinished(false);
-        setCurrentFrase(frases[Math.floor(Math.random() * frases.length)]);
+        setCompleted(false);
+        setHighlighted(false);
+        trocarFrase();
 
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
             if (rand < 0.5) {
-                // Emojis de palavras
-                const random = currentFrase.opcoes[Math.floor(Math.random() * currentFrase.opcoes.length)];
+                const opcao =
+                    currentFrase.opcoes[Math.floor(Math.random() * currentFrase.opcoes.length)];
                 setEntities((prev) => [
                     ...prev,
-                    { id: Date.now() + Math.random(), type: "word", emoji: random, x: 1000, y: 0 },
+                    { id: Date.now() + Math.random(), type: "emoji", emoji: opcao, x: 1000, y: 0 },
                 ]);
-            } else if (rand < 0.7) {
-                // Obstáculos
-                const obs = rand < 0.6 ? rock : mushroom;
+            } else if (rand < 0.8) {
+                const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
                 setEntities((prev) => [
                     ...prev,
-                    { id: Date.now() + Math.random(), type: "obstacle", img: obs, x: 1000, y: 0 },
+                    { id: Date.now() + Math.random(), type: obs.type, img: obs.img, x: 1000, y: 0 },
                 ]);
             } else {
-                // Bônus
-                const bonus = rand < 0.85 ? star : heart;
-                const points = bonus === star ? 15 : 20;
+                const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
                 setEntities((prev) => [
                     ...prev,
-                    { id: Date.now() + Math.random(), type: "bonus", img: bonus, points, x: 1000, y: 0 },
+                    { id: Date.now() + Math.random(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 },
                 ]);
             }
-        }, 2500);
+        }, 2200);
 
+        // ⏳ Timer geral
         timerRef.current = setInterval(() => {
             setTimeLeft((t) => {
                 if (t <= 1) {
                     clearInterval(timerRef.current);
                     clearInterval(spawnRef.current);
                     clearInterval(fraseTimerRef.current);
-                    setFinished(true);
                     setRunning(false);
+                    setFinished(true);
                     return 0;
                 }
                 return t - 1;
             });
         }, 1000);
 
+        // 🔁 Mudar a frase automaticamente a cada 10s
         fraseTimerRef.current = setInterval(() => {
-            setCurrentFrase(frases[Math.floor(Math.random() * frases.length)]);
-        }, 20000);
+            trocarFrase();
+        }, 10000);
     };
 
-    // Movimento dos elementos
+    // 🎮 Movimento das entidades
     useEffect(() => {
         if (!running) return;
         const move = setInterval(() => {
-            setEntities((prev) => prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -100));
-        }, 40);
+            setEntities((prev) =>
+                prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -120)
+            );
+        }, 30);
         return () => clearInterval(move);
     }, [running]);
 
-    // Colisões
+    // 🎯 Colisões e pontuação
     useEffect(() => {
         if (!running) return;
         const check = setInterval(() => {
+            if (isJumping) return;
+
             setEntities((prev) => {
                 const next = [];
                 prev.forEach((e) => {
-                    const collided = e.x < 200 && e.x > 80 && positionY < 50;
-                    if (collided) {
-                        if (e.type === "word") {
+                    const charWidth = 120;
+                    const charHeight = 120;
+                    const entW = e.type === "emoji" ? 60 : 80;
+                    const entH = e.type === "emoji" ? 60 : 80;
+                    const collided =
+                        e.x < charPosX + charWidth &&
+                        e.x + entW > charPosX &&
+                        e.y < positionY + charHeight &&
+                        e.y + entH > positionY;
+
+                    if (collided && !e.hit) {
+                        e.hit = true;
+
+                        if (e.type === "emoji") {
                             if (e.emoji === currentFrase.correta) {
+                                setHighlighted(true);
+                                setCompleted(true);
                                 setScore((s) => s + 15);
+                                addFloatingScore("+15", "green");
+                                setFlashColor("green");
+
+                                // 🟡 Trocar frase ao acertar
+                                setTimeout(() => trocarFrase(), 800);
                             } else {
-                                setScore((s) => Math.max(0, s - 10));
+                                setScore((s) => Math.max(0, s - 5));
+                                addFloatingScore("-5", "red");
+                                setFlashColor("red");
                             }
-                        } else if (e.type === "bonus") {
-                            setScore((s) => s + e.points);
+                        } else if (e.type === "star" || e.type === "heart") {
+                            setScore((s) => s + (e.points || 10));
+                            addFloatingScore(`+${e.points}`, "yellow");
+                            setFlashColor("green");
                         } else {
                             setScore((s) => Math.max(0, s - 10));
+                            addFloatingScore("-10", "red");
+                            setFlashColor("red");
                         }
-                    } else {
+
+                        setTimeout(() => setFlashColor(""), 300);
+                    } else if (!collided) {
                         next.push(e);
                     }
                 });
                 return next;
             });
-        }, 150);
+        }, 100);
         return () => clearInterval(check);
-    }, [running, positionY, currentFrase]);
+    }, [running, positionY, currentFrase, isJumping]);
 
-    // Pulo
+    const addFloatingScore = (text, color) => {
+        const id = `${Date.now()}-${Math.random()}`;
+        setFloatingScores((prev) => [...prev, { id, text, color }]);
+        setTimeout(() => {
+            setFloatingScores((prev) => prev.filter((f) => f.id !== id));
+        }, 1000);
+    };
+
+    // 🪂 Pulo
     const handleJump = () => {
         if (!running || isJumping) return;
         setIsJumping(true);
-        setPositionY(120);
-        setTimeout(() => setPositionY(0), 500);
-        setTimeout(() => setIsJumping(false), 700);
+        setPositionY(220);
+        setTimeout(() => setPositionY(0), 700);
+        setTimeout(() => setIsJumping(false), 900);
     };
 
     useEffect(() => {
@@ -173,9 +262,10 @@ export default function Fase6({ onNext, idJogador }) {
         };
     }, [isJumping, running]);
 
-    // Exibe recompensa e feedback
+    // 🎁 Fim da fase
     useEffect(() => {
         if (finished) {
+            clearInterval(fraseTimerRef.current);
             setShowRecompensa(true);
             const t = setTimeout(() => {
                 setShowRecompensa(false);
@@ -191,15 +281,28 @@ export default function Fase6({ onNext, idJogador }) {
     };
 
     return (
-        <div className="fase6-container" onClick={handleStart}>
+        <div className="runner-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg})` }} />
+
+            {flashColor && <div className={`flash-overlay ${flashColor}`} />}
+
+            {floatingScores.map((f) => (
+                <div key={f.id} className={`floating-score ${f.color}`}>
+                    {f.text}
+                </div>
+            ))}
+
             <div className="logo-top"><img src={logo} alt="Logo" /></div>
 
             {!finished && (
                 <>
                     {running && (
                         <>
-                            <div className="frase-display">{currentFrase.texto}</div>
+                            <div className={`frase-display ${highlighted ? "highlighted" : ""}`}>
+                                {completed
+                                    ? currentFrase.texto.replace("___", currentFrase.correta)
+                                    : currentFrase.texto}
+                            </div>
                             <CardPontuacao score={score} />
                             <BarraTempo timeLeft={timeLeft} />
                         </>
@@ -216,8 +319,12 @@ export default function Fase6({ onNext, idJogador }) {
 
                     {running &&
                         entities.map((e) => (
-                            <div key={e.id} className={`entity ${e.type}`} style={{ left: `${e.x}px`, bottom: `20px` }}>
-                                {e.type === "word" ? (
+                            <div
+                                key={e.id}
+                                className={`entity ${e.type}`}
+                                style={{ left: `${e.x}px`, bottom: `${20 + e.y}px` }}
+                            >
+                                {e.type === "emoji" ? (
                                     <span className="emoji-word">{e.emoji}</span>
                                 ) : (
                                     <img src={e.img} alt={e.type} />
@@ -225,16 +332,18 @@ export default function Fase6({ onNext, idJogador }) {
                             </div>
                         ))}
 
-                    {!running && !showSelector && <div className="hint">Clique para começar a Fase 6</div>}
+                    {!running && !showSelector && <div className="hint">Clique para começar a Fase 6 🎮</div>}
 
                     {showSelector && (
-                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} onClose={() => setShowSelector(false)} />
+                        <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} />
                     )}
                 </>
             )}
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_6" />}
+
+            <Ranking />
             <Credito />
         </div>
     );

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Fase_5.css";
 
-import bg5 from "../../../assets/imagens/runner/Plano_fundo_5.jpg";
+import bg5 from "../../../assets/imagens/runner/Plano_fundo_fase_1.jpg";
 import logo from "../../../assets/imagens/runner/Logo_2.png";
 
 import char1 from "../../../assets/imagens/runner/character1.gif";
@@ -22,8 +22,9 @@ import CardPontuacao from "../../CardPontuacao/CardPontuacao";
 import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
+import Ranking from "../../Ranking/Ranking";
 
-// Áudios das frases (adicione os arquivos MP3 em /assets/sounds)
+// Áudios das frases
 import fraseGato from "../../../assets/sounds/Fase_5/frase_gato.mp3";
 import fraseBola from "../../../assets/sounds/Fase_5/frase_bola.mp3";
 import fraseFoca from "../../../assets/sounds/Fase_5/frase_foca.mp3";
@@ -55,15 +56,20 @@ export default function Fase5({ onNext, idJogador }) {
     const [entities, setEntities] = useState([]);
     const [finished, setFinished] = useState(false);
     const [showSelector, setShowSelector] = useState(true);
-    const [timeLeft, setTimeLeft] = useState(5);
+    const [timeLeft, setTimeLeft] = useState(30);
     const [fraseAtual, setFraseAtual] = useState(frases[0]);
+    const [collectedWords, setCollectedWords] = useState([]);
     const [palavraIndex, setPalavraIndex] = useState(0);
     const [showRecompensa, setShowRecompensa] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
+    const [flashColor, setFlashColor] = useState("");
+    const [floatingScores, setFloatingScores] = useState([]);
 
     const spawnRef = useRef(null);
     const timerRef = useRef(null);
-    const somRef = useRef(null);
+    const audioRef = useRef(null);
+
+    const charPosX = 200;
 
     const personagens = [
         { name: "Lulix", src: char1 },
@@ -73,10 +79,25 @@ export default function Fase5({ onNext, idJogador }) {
         { name: "Zuppy", src: char5 },
     ];
 
-    const tocarSomFrase = () => {
-        if (somRef.current) somRef.current.pause();
-        somRef.current = new Audio(fraseAtual.som);
-        somRef.current.play();
+    const tocarSomFrase = (src) => {
+        try {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+            audioRef.current = new Audio(src);
+            audioRef.current.play().catch(() => { });
+        } catch (e) {
+            console.warn("Erro ao tocar áudio:", e);
+        }
+    };
+
+    const escolherNovaFrase = (play = true) => {
+        const nova = frases[Math.floor(Math.random() * frases.length)];
+        setFraseAtual(nova);
+        setPalavraIndex(0);
+        setCollectedWords([]);
+        if (play) tocarSomFrase(nova.som);
     };
 
     const handleStart = () => {
@@ -88,37 +109,26 @@ export default function Fase5({ onNext, idJogador }) {
         setFinished(false);
         setShowRecompensa(false);
         setShowFeedback(false);
-        setPalavraIndex(0);
-        setFraseAtual(frases[Math.floor(Math.random() * frases.length)]);
-        tocarSomFrase();
+        escolherNovaFrase(true);
 
         spawnRef.current = setInterval(() => {
             const rand = Math.random();
-            if (rand < 0.5) {
-                // Palavras
-                const palavras = fraseAtual.palavras;
-                const todas = ["O", "A", "gato", "foca", "bola", "é", "azul", "correu", "nada", "canta"];
-                const palavra = Math.random() < 0.6
-                    ? palavras[Math.floor(Math.random() * palavras.length)]
-                    : todas[Math.floor(Math.random() * todas.length)];
-                setEntities((prev) => [
-                    ...prev,
-                    { id: Date.now() + Math.random(), type: "word", text: palavra, x: 1000, y: 0 },
-                ]);
-            } else if (rand < 0.75) {
+            if (rand < 0.45) {
+                const next = fraseAtual.palavras[palavraIndex] || fraseAtual.palavras[0];
+                const char = Math.random() < 0.8 ? next : fraseAtual.palavras[Math.floor(Math.random() * fraseAtual.palavras.length)];
+                setEntities((prev) => [...prev, { id: Date.now() + Math.random(), type: "word", text: char, x: 1000, y: 0 }]);
+            } else if (rand < 0.7) {
+                const todas = ["O", "A", "gato", "foca", "bola", "é", "azul", "correu", "nada", "canta", "mesa", "janela", "copo"];
+                const palavra = todas[Math.floor(Math.random() * todas.length)];
+                setEntities((prev) => [...prev, { id: Date.now() + Math.random(), type: "word", text: palavra, x: 1000, y: 0 }]);
+            } else if (rand < 0.9) {
                 const obs = obstacles[Math.floor(Math.random() * obstacles.length)];
-                setEntities((prev) => [
-                    ...prev,
-                    { id: Date.now() + Math.random(), type: obs.type, img: obs.img, x: 1000, y: 0 },
-                ]);
+                setEntities((prev) => [...prev, { id: Date.now() + Math.random(), type: obs.type, img: obs.img, x: 1000, y: 0 }]);
             } else {
                 const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
-                setEntities((prev) => [
-                    ...prev,
-                    { id: Date.now() + Math.random(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 },
-                ]);
+                setEntities((prev) => [...prev, { id: Date.now() + Math.random(), type: bonus.type, img: bonus.img, points: bonus.points, x: 1000, y: 0 }]);
             }
-        }, 2500);
+        }, 2000);
 
         timerRef.current = setInterval(() => {
             setTimeLeft((prev) => {
@@ -137,9 +147,7 @@ export default function Fase5({ onNext, idJogador }) {
     useEffect(() => {
         if (!running) return;
         const loop = setInterval(() => {
-            setEntities((prev) =>
-                prev.map((e) => ({ ...e, x: e.x - 7 })).filter((e) => e.x > -120)
-            );
+            setEntities((prev) => prev.map((e) => ({ ...e, x: e.x - 8 })).filter((e) => e.x > -140));
         }, 30);
         return () => clearInterval(loop);
     }, [running]);
@@ -147,43 +155,80 @@ export default function Fase5({ onNext, idJogador }) {
     useEffect(() => {
         if (!running) return;
         const check = setInterval(() => {
+            if (isJumping) return;
+
             setEntities((prev) => {
                 const next = [];
                 prev.forEach((e) => {
-                    const collided = e.x < 240 && e.x > 150 && e.y < 120;
-                    if (collided) {
+                    const charWidth = 120;
+                    const charHeight = 120;
+                    const entW = e.type === "word" ? 80 : 80;
+                    const entH = 60;
+                    const collided =
+                        e.x < charPosX + charWidth &&
+                        e.x + entW > charPosX &&
+                        e.y < positionY + charHeight &&
+                        e.y + entH > positionY;
+
+                    if (collided && !e.hit) {
+                        e.hit = true;
+
                         if (e.type === "word") {
-                            const palavraCerta = fraseAtual.palavras[palavraIndex];
-                            if (e.text === palavraCerta) {
-                                setScore((s) => s + 10);
+                            const palavraEsperada = fraseAtual.palavras[palavraIndex];
+                            if (e.text === palavraEsperada) {
+                                setCollectedWords((c) => [...c, e.text]);
                                 setPalavraIndex((i) => i + 1);
-                                if (palavraIndex + 1 === fraseAtual.palavras.length) {
-                                    tocarSomFrase();
-                                    setFraseAtual(frases[Math.floor(Math.random() * frases.length)]);
-                                    setPalavraIndex(0);
-                                }
+                                setScore((s) => s + 10);
+                                setFlashColor("green");
+                                addFloatingScore("+10", "green");
+
+                                setTimeout(() => {
+                                    if (palavraIndex + 1 >= fraseAtual.palavras.length) {
+                                        setScore((s) => s + 20);
+                                        addFloatingScore("+20", "green");
+                                        escolherNovaFrase(true);
+                                    }
+                                }, 50);
                             } else {
                                 setScore((s) => Math.max(0, s - 5));
+                                setFlashColor("red");
+                                addFloatingScore("-5", "red");
                             }
                         } else if (e.type === "star" || e.type === "heart") {
                             setScore((s) => s + (e.points || 10));
+                            setFlashColor("green");
+                            addFloatingScore(`+${e.points}`, "yellow");
                         } else {
                             setScore((s) => Math.max(0, s - 10));
+                            setFlashColor("red");
+                            addFloatingScore("-10", "red");
                         }
-                    } else next.push(e);
+
+                        setTimeout(() => setFlashColor(""), 300);
+                    } else if (!collided) {
+                        next.push(e);
+                    }
                 });
                 return next;
             });
         }, 100);
         return () => clearInterval(check);
-    }, [running, fraseAtual, palavraIndex]);
+    }, [running, positionY, charPosX, fraseAtual, palavraIndex, isJumping]);
+
+    const addFloatingScore = (text, color) => {
+        const id = `${Date.now()}-${Math.random()}`;
+        setFloatingScores((prev) => [...prev, { id, text, color }]);
+        setTimeout(() => {
+            setFloatingScores((prev) => prev.filter((f) => f.id !== id));
+        }, 900);
+    };
 
     const handleJump = () => {
         if (!running || isJumping) return;
         setIsJumping(true);
-        setPositionY(150);
-        setTimeout(() => setPositionY(0), 500);
-        setTimeout(() => setIsJumping(false), 800);
+        setPositionY(220);
+        setTimeout(() => setPositionY(0), 700);
+        setTimeout(() => setIsJumping(false), 900);
     };
 
     useEffect(() => {
@@ -212,9 +257,23 @@ export default function Fase5({ onNext, idJogador }) {
         setShowSelector(false);
     };
 
+    const handleRepetirSom = (e) => {
+        if (e) e.stopPropagation();
+        if (fraseAtual && fraseAtual.som) tocarSomFrase(fraseAtual.som);
+    };
+
     return (
         <div className="runner-main" onClick={handleStart}>
             <div className="bg-layer fixed" style={{ backgroundImage: `url(${bg5})` }} />
+
+            {flashColor && <div className={`flash-overlay ${flashColor}`} />}
+
+            {floatingScores.map((f) => (
+                <div key={f.id} className={`floating-score ${f.color}`}>
+                    {f.text}
+                </div>
+            ))}
+
             <div className="logo-top"><img src={logo} alt="Logo" /></div>
 
             {!finished && (
@@ -222,17 +281,26 @@ export default function Fase5({ onNext, idJogador }) {
                     {running && (
                         <>
                             <div className="frase-display">
-                                <button className="play-audio" onClick={(e) => { e.stopPropagation(); tocarSomFrase(); }}>🔊</button>
-                                <span>{fraseAtual.texto}</span>
+                                <button className="play-audio" onClick={handleRepetirSom}>🔊</button>
+                                <div className="frase-text">
+                                    {fraseAtual.palavras.map((w, i) => (
+                                        <span key={i} className={`frase-word ${collectedWords.includes(w) ? "collected" : ""}`}>
+                                            {w}
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
+
                             <CardPontuacao score={score} />
                             <BarraTempo timeLeft={timeLeft} />
                         </>
                     )}
 
                     {character && (
-                        <div className={`character-wrap ${isJumping ? "jumping" : ""}`}
-                            style={{ left: `200px`, bottom: `${20 + positionY}px` }}>
+                        <div
+                            className={`character-wrap ${isJumping ? "jumping" : ""}`}
+                            style={{ left: `${charPosX}px`, bottom: `${20 + positionY}px` }}
+                        >
                             <img src={character.src} alt={character.name} className="character" />
                         </div>
                     )}
@@ -254,6 +322,9 @@ export default function Fase5({ onNext, idJogador }) {
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_5" />}
+
+
+            <Ranking />
             <Credito />
         </div>
     );

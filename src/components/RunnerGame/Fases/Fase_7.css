@@ -1,3 +1,4 @@
+/* 🌈 Estilos principais da Fase 7 - Corrida da Memória */
 .runner-main {
     position: relative;
     width: 100%;
@@ -5,9 +6,10 @@
     overflow: hidden;
     background: linear-gradient(#87CEEB, #bfe9ff);
     cursor: pointer;
+    font-family: "Poppins", sans-serif;
 }
 
-/* 🔥 Flash verde/vermelho */
+/* 🔥 Flash verde/vermelho de acerto/erro */
 .flash-overlay {
     position: absolute;
     inset: 0;
@@ -34,7 +36,7 @@
     }
 }
 
-/* 💫 Score flutuante */
+/* 💫 Pontuação flutuante */
 .floating-score {
     position: absolute;
     left: 50%;
@@ -71,6 +73,7 @@
     }
 }
 
+/* 🌅 Plano de fundo */
 .bg-layer.fixed {
     position: absolute;
     inset: 0;
@@ -79,6 +82,7 @@
     z-index: 1;
 }
 
+/* 🪩 Logo */
 .logo-top {
     position: absolute;
     top: 10px;
@@ -91,6 +95,45 @@
     height: auto;
 }
 
+/* 🧠 Card de memória (emojis a lembrar) */
+.memory-card {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(250, 33, 197, 0.9);
+    border-radius: 18px;
+    padding: 10px 18px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    z-index: 30;
+    transition: opacity 0.6s ease-in-out;
+}
+
+.memory-card.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* ✨ Emojis lembrados */
+.memory-emoji {
+    opacity: 0.5;
+    transition: all 0.3s ease-in-out;
+}
+
+.memory-emoji.found {
+    opacity: 1;
+    transform: scale(1.2);
+    text-shadow: 0 0 10px #fff;
+}
+
+/* 🏃‍♂️ Personagem */
 .character-wrap {
     position: absolute;
     left: 120px;
@@ -99,14 +142,14 @@
 }
 
 .character {
-    width: 300px !important;
+    width: 280px !important;
     height: auto;
 }
 
+/* 👾 Entidades (itens e obstáculos) */
 .entity {
     position: absolute;
-    font-size: 1.4rem;
-    color: white;
+    font-size: 2rem;
     text-shadow: 2px 2px 8px black;
     z-index: 12;
 }
@@ -116,16 +159,18 @@
     height: auto;
 }
 
+/* 💬 Texto/emoji do jogo */
 .word-text {
-    font-size: 1.6rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #fff;
-    background: rgba(250, 33, 197, 0.8);
+    background: rgba(11, 160, 244, 0.9);
     border-radius: 10px;
-    padding: 4px 10px;
+    padding: 6px 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* 💡 Dica */
 .hint {
     position: absolute;
     left: 50%;
@@ -133,11 +178,13 @@
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.6);
     color: white;
-    padding: 8px 16px;
-    border-radius: 12px;
+    padding: 10px 18px;
+    border-radius: 14px;
     font-weight: bold;
+    font-size: 1.1rem;
 }
 
+/* 🏁 Pop-up final */
 .story-popup {
     position: absolute;
     bottom: 10%;
@@ -151,6 +198,7 @@
     max-width: 500px;
     text-align: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.8s ease-in-out;
 }
 
 .story-popup h3 {
@@ -159,6 +207,19 @@
 }
 
 .story-popup p {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #333;
+}
+
+/* 🌟 Animação suave de entrada */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 10%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
 }

@@ -144,3 +144,29 @@
     border-radius: 10px;
     font-weight: bold;
 }
+
+
+.btn-repetir-topo {
+  position: fixed;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.btn-repetir {
+  background: linear-gradient(90deg, #ff62c0, #6b5bff);
+  color: #fff;
+  font-weight: bold;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.btn-repetir:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #ff77d2, #7a6bff);
+}

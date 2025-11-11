@@ -1,67 +1,85 @@
-// src/pages/Ranking.jsx
-import React, { useEffect, useState } from "react";
+// src/components/RunnerGame/Ranking.jsx
+import React, { useState, useEffect } from "react";
 import "./Ranking.css";
-import char1 from "../../assets/imagens/runner/character1.gif";
-import char2 from "../../assets/imagens/runner/character2.gif";
-import char3 from "../../assets/imagens/runner/character3.gif";
 
-const Ranking = ({ onClose }) => {
-    const [jogadores, setJogadores] = useState([]);
+export default function Ranking() {
+    const [show, setShow] = useState(false);
+    const [ranking, setRanking] = useState([]);
+    const [carregando, setCarregando] = useState(false);
+    const [erro, setErro] = useState("");
 
-    useEffect(() => {
-        async function fetchRanking() {
-            try {
-                console.log("📡 Buscando ranking no servidor...");
-                const response = await fetch("http://localhost:5000/api/ranking");
-                console.log("🔎 Status da resposta:", response.status);
+    // Função que busca o Top 10 jogadores do backend
+    const carregarRanking = async () => {
+        setCarregando(true);
+        setErro("");
 
-                if (!response.ok) throw new Error("Erro ao carregar ranking");
-                const data = await response.json();
-
-                console.log("🏆 Ranking carregado com sucesso:", data);
-                setJogadores(data);
-            } catch (err) {
-                console.error("💥 Erro ao buscar ranking:", err);
+        try {
+            const resposta = await fetch("http://localhost:5000/api/jogadores/ranking");
+            if (!resposta.ok) {
+                throw new Error("Erro ao carregar o ranking do servidor.");
             }
+
+            const dados = await resposta.json();
+            setRanking(dados);
+        } catch (erro) {
+            console.error("💥 Erro ao buscar ranking:", erro);
+            setErro("Erro ao carregar o ranking. Tente novamente mais tarde.");
+        } finally {
+            setCarregando(false);
         }
+    };
 
-        fetchRanking();
-    }, []);
-
+    // Busca os dados apenas quando o modal for aberto
+    useEffect(() => {
+        if (show) {
+            carregarRanking();
+        }
+    }, [show]);
 
     return (
-        <div className="ranking-container">
-            <h1 className="ranking-title">🏆 Top 10 Jogadores</h1>
+        <>
+            {/* Botão de Ranking */}
+            <button className="btn-ranking" onClick={() => setShow(true)}>
+                Ranking
+            </button>
 
-            <div className="ranking-list">
-                {jogadores.length > 0 ? (
-                    jogadores.map((jogador, index) => (
-                        <div
-                            key={jogador.id_jogador}
-                            className={`ranking-card posicao-${index + 1}`}
-                        >
-                            <div className="ranking-posicao">#{index + 1}</div>
-                            <div className="ranking-info">
-                                <h2 className="ranking-nome">{jogador.nome}</h2>
-                                <p className="ranking-pontuacao">{jogador.pontuacao_total} pontos</p>
-                            </div>
-                            {index === 0 && <img src={char1} alt="Campeão" className="ranking-img" />}
-                            {index === 1 && <img src={char2} alt="Vice" className="ranking-img" />}
-                            {index === 2 && <img src={char3} alt="Terceiro" className="ranking-img" />}
+            {/* Modal de Ranking */}
+            {show && (
+                <div className="ranking-overlay" onClick={() => setShow(false)}>
+                    <div className="ranking-card" onClick={(e) => e.stopPropagation()}>
+                        <h2>🏆 Top 10 Jogadores</h2>
+                        <p className="sub">As melhores pontuações do jogo</p>
+
+                        <div className="ranking-lista">
+                            {carregando && <p className="sem-dados">Carregando ranking...</p>}
+
+                            {erro && <p className="erro">{erro}</p>}
+
+                            {!carregando && !erro && ranking.length === 0 && (
+                                <p className="sem-dados">Nenhum jogador cadastrado ainda.</p>
+                            )}
+
+                            {!carregando &&
+                                !erro &&
+                                ranking.length > 0 &&
+                                ranking.map((jogador, i) => (
+                                    <div
+                                        key={jogador.id_jogador || i}
+                                        className={`ranking-item ${i === 0 ? "top1" : ""}`}
+                                    >
+                                        <span className="posicao">#{i + 1}</span>
+                                        <span className="nome">{jogador.nome}</span>
+                                        <span className="pontos">{jogador.pontuacao_total} pts</span>
+                                    </div>
+                                ))}
                         </div>
-                    ))
-                ) : (
-                    <p className="ranking-loading">Carregando ranking...</p>
-                )}
-            </div>
 
-            {onClose && (
-                <button className="btn-voltar" onClick={onClose}>
-                    ⬅ Voltar
-                </button>
+                        <button className="btn-fechar" onClick={() => setShow(false)}>
+                            Fechar
+                        </button>
+                    </div>
+                </div>
             )}
-        </div>
+        </>
     );
-};
-
-export default Ranking;
+}

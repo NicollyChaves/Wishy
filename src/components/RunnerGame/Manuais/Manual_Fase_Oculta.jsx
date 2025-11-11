@@ -94,7 +94,7 @@ export default function Manual_Fase_Oculta({ onStart }) {
         <section className="manual-section">
             <h3>⏱️ Tempo</h3>
             <p>
-                Você terá <b>100 segundos</b> para conquistar o maior número de pontos possível.
+                Você terá <b>30 segundos</b> para conquistar o maior número de pontos possível.
                 Dê o seu melhor e mostre que é um verdadeiro guardião da floresta! 🌳✨
             </p>
         </section>
