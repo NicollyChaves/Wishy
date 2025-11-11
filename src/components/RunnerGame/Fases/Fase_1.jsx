@@ -21,6 +21,8 @@ import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 import Ranking from "../../Ranking/Ranking";
+import Duvida from "../../Duvida/Duvida";
+import Manual_Fase_1 from "../Manuais/Manual_Fase_1";
 
 const words = [
   { img: "🐱", word: "Gato", correct: "G" },
@@ -56,6 +58,8 @@ export default function Fase1({ onNext, idJogador }) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [flashColor, setFlashColor] = useState("");
   const [floatingScores, setFloatingScores] = useState([]);
+
+  const [mostrarDuvida, setMostrarDuvida] = useState(false);
 
   const spawnRef = useRef(null);
   const timerRef = useRef(null);
@@ -282,6 +286,19 @@ export default function Fase1({ onNext, idJogador }) {
             <EscolherPersonagem personagens={personagens} onChoose={handleCharacterChoose} onClose={() => setShowSelector(false)} />
           )}
         </>
+      )}
+
+      <button
+        className="botao-duvida"
+        onClick={() => setMostrarDuvida(true)}
+      >
+        ?
+      </button>
+
+      {mostrarDuvida && (
+        <Duvida onClose={() => setMostrarDuvida(false)}>
+          <Manual_Fase_1 />
+        </Duvida>
       )}
 
       {showRecompensa && <Recompensa pontuacao={score} />}

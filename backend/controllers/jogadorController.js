@@ -91,11 +91,13 @@ export const salvarPontuacao = (req, res) => {
 };
 
 // 🔹 Retorna o ranking Top 10 geral
-export const rankingTop10 = (req, res) => {
-  listarTop10((err, resultados) => {
-    if (err) {
-      return res.status(500).json({ error: 'Erro ao buscar ranking do servidor' });
-    }
-    res.json(resultados);
-  });
+export const rankingTop10 = async (req, res) => {
+  try {
+    console.log('📊 Requisição recebida para buscar o ranking Top 10');
+    const ranking = await listarTop10();
+    res.status(200).json(ranking);
+  } catch (error) {
+    console.error('❌ Erro no controller ao buscar ranking:', error);
+    res.status(500).json({ message: 'Erro ao carregar o ranking do servidor.' });
+  }
 };

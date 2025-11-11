@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/registrar", registrarJogador); // cria o jogador com o nome
 router.post("/pontuacao", salvarPontuacao); // atualiza pontuação das fases
-router.get("/ranking", rankingTop10); // retorna o top 10 geral
+router.get('/ranking', rankingTop10); // retorna o top 10 geral
 
 export default router;
