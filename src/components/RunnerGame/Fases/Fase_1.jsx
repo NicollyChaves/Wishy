@@ -59,8 +59,6 @@ export default function Fase1({ onNext, idJogador }) {
   const [flashColor, setFlashColor] = useState("");
   const [floatingScores, setFloatingScores] = useState([]);
 
-  const [mostrarDuvida, setMostrarDuvida] = useState(false);
-
   const spawnRef = useRef(null);
   const timerRef = useRef(null);
   const emojiTimerRef = useRef(null);
@@ -288,18 +286,9 @@ export default function Fase1({ onNext, idJogador }) {
         </>
       )}
 
-      <button
-        className="botao-duvida"
-        onClick={() => setMostrarDuvida(true)}
-      >
-        ?
-      </button>
-
-      {mostrarDuvida && (
-        <Duvida onClose={() => setMostrarDuvida(false)}>
-          <Manual_Fase_1 />
-        </Duvida>
-      )}
+      <Duvida>
+        <Manual_Fase_1 />
+      </Duvida>
 
       {showRecompensa && <Recompensa pontuacao={score} />}
       {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_1" />}

@@ -23,6 +23,9 @@ import Recompensa from "../../Recompensa/Recompensa";
 import Feedback from "../../Feedback/Feedback";
 import Credito from "../../creditos/Creditos";
 import Ranking from "../../Ranking/Ranking";
+import Manual_Fase_6 from "../Manuais/Manual_Fase_6";
+import Duvida from "../../Duvida/Duvida";
+
 
 // 🧠 Frases com opções de resposta e áudio
 const frases = [
@@ -339,6 +342,10 @@ export default function Fase6({ onNext, idJogador }) {
                     )}
                 </>
             )}
+
+            <Duvida>
+                <Manual_Fase_6 />
+            </Duvida>
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_6" />}

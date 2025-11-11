@@ -23,6 +23,8 @@ import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 import Ranking from "../../Ranking/Ranking";
+import Duvida from "../../Duvida/Duvida";
+import Manual_Fase_5 from "../Manuais/Manual_Fase_5";
 
 // Áudios das frases
 import fraseGato from "../../../assets/sounds/Fase_5/frase_gato.mp3";
@@ -319,6 +321,10 @@ export default function Fase5({ onNext, idJogador }) {
                     )}
                 </>
             )}
+
+            <Duvida>
+                <Manual_Fase_5 />
+            </Duvida>
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_5" />}

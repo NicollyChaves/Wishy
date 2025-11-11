@@ -23,6 +23,8 @@ import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 import Ranking from "../../Ranking/Ranking";
+import Duvida from "../../Duvida/Duvida";
+import Manual_Fase_3 from "../Manuais/Manual_Fase_3";
 
 // Sons
 import somBola from "../../../assets/sounds/Bola.mp3";
@@ -303,6 +305,11 @@ export default function Fase3({ onNext, idJogador }) {
                     )}
                 </>
             )}
+
+
+            <Duvida>
+                <Manual_Fase_3 />
+            </Duvida>
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_3" />}

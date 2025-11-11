@@ -22,6 +22,8 @@ import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Ranking from "../../Ranking/Ranking";
+import Duvida from "../../Duvida/Duvida";
+import Manual_Fase_2 from "../Manuais/Manual_Fase_2";
 
 const words = [
     { word: "SOL" },
@@ -325,6 +327,10 @@ export default function Fase2({ onNext, idJogador }) {
                     )}
                 </>
             )}
+
+            <Duvida>
+                <Manual_Fase_2 />
+            </Duvida>
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && (

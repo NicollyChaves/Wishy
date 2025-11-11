@@ -24,6 +24,7 @@ import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 import Manual_Fase_7 from "../Manuais/Manual_Fase_7";
 import Ranking from "../../Ranking/Ranking";
+import Duvida from "../../Duvida/Duvida";
 
 export default function Fase7({ onNext, idJogador }) {
     const [showManual, setShowManual] = useState(true);
@@ -313,6 +314,10 @@ export default function Fase7({ onNext, idJogador }) {
                             )}
                         </>
                     )}
+
+                    <Duvida>
+                        <Manual_Fase_7 />
+                    </Duvida>
 
                     {showRecompensa && <Recompensa pontuacao={score} />}
                     {showFeedback && (

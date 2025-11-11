@@ -22,6 +22,7 @@ import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 import Manual_Fase_Oculta from "../Manuais/Manual_Fase_Oculta";
 import Ranking from "../../Ranking/Ranking";
+import Duvida from "../../Duvida/Duvida";
 
 const creatures = [
     { img: "🧚‍♀️", name: "Fada" },
@@ -322,6 +323,11 @@ export default function FaseOculta({ onNext, idJogador }) {
                     )}
                 </>
             )}
+
+
+            <Duvida>
+                <Manual_Fase_Oculta />
+            </Duvida>
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_oculta" />}

@@ -23,6 +23,8 @@ import EscolherPersonagem from "../../EscolherPersonagem/EscolherPersonagem";
 import Feedback from "../../Feedback/Feedback";
 import Recompensa from "../../Recompensa/Recompensa";
 import Ranking from "../../Ranking/Ranking";
+import Duvida from "../../Duvida/Duvida";
+import Manual_Fase_4 from "../Manuais/Manual_Fase_4";
 
 // 👇 Cenas do cotidiano
 const cenas = [
@@ -282,6 +284,10 @@ export default function Fase4({ onNext, idJogador }) {
                     )}
                 </>
             )}
+
+            <Duvida>
+                <Manual_Fase_4 />
+            </Duvida>
 
             {showRecompensa && <Recompensa pontuacao={score} />}
             {showFeedback && <Feedback pontuacao={score} onNext={onNext} idJogador={idJogador} fase="fase_4" />}
