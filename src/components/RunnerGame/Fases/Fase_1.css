@@ -170,14 +170,17 @@
 .hint {
     position: absolute;
     left: 50%;
-    bottom: 5% !important;
+    bottom: 5%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.5) !important;
-    color: white !important;
-    padding: 8px 16px !important;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 8px 16px;
     border-radius: 10px;
     font-weight: bold;
+    z-index: 1000;
+    /* garante que fique acima de outros elementos */
 }
+
 
 .end-modal {
     position: fixed;

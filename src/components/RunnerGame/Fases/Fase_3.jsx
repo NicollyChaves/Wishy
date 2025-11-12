@@ -99,7 +99,7 @@ export default function Fase3({ onNext, idJogador }) {
         setRunning(true);
         setScore(0);
         setEntities([]);
-        setTimeLeft(30);
+        setTimeLeft(90);
         setFinished(false);
         setShowRecompensa(false);
         setShowFeedback(false);
