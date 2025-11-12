@@ -1,0 +1,28 @@
+.botao-audio {
+    position: fixed;
+    /* fixa na tela */
+    top: 20px;
+    /* distância do topo */
+    right: 20px;
+    /* distância da direita */
+    background-color: #FA21C5;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    /* deixa redondo */
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    /* garante que fique sobre outros elementos */
+    transition: all 0.3s ease;
+}
+
+.botao-audio:hover {
+    background-color: #7aceff;
+    transform: scale(1.1);
+}

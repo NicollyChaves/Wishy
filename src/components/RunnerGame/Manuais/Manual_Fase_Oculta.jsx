@@ -14,9 +14,15 @@ import rock from "../../../assets/imagens/runner/Pedra.png";
 import star from "../../../assets/imagens/runner/Estrela.png";
 import heart from "../../../assets/imagens/runner/Coracao.png";
 
+import AudioManual from "../AudioManual/AudioManual";
+import manualFaseOculta from "../../../assets/sounds/Manuais/Manual_fase_oculta.mp3";
+
 export default function Manual_Fase_Oculta({ onStart }) {
     return (<div className="manual-container"> <div className="manual-card">
         {/* Logo */} <div className="manual-logo"> <img src={logo} alt="Logo Jogo" /> </div>
+
+        {/* Botão para ouvir o manual */}
+        <AudioManual src={manualFaseOculta} />
 
         <h2>🪄 Manual da Fase Oculta - Floresta Encantada</h2>
         <p className="intro">
@@ -96,14 +102,6 @@ export default function Manual_Fase_Oculta({ onStart }) {
             <p>
                 Você terá <b>30 segundos</b> para conquistar o maior número de pontos possível.
                 Dê o seu melhor e mostre que é um verdadeiro guardião da floresta! 🌳✨
-            </p>
-        </section>
-
-        {/* Dica Final */}
-        <section className="manual-section">
-            <h3>💡 Dica Final</h3>
-            <p>
-                Se conseguir mais de <b>500 pontos</b>, uma surpresa mágica pode acontecer no final da fase... 👀
             </p>
         </section>
 

@@ -14,6 +14,9 @@ import heart from "../../../assets/imagens/runner/Coracao.png";
 import rock from "../../../assets/imagens/runner/Pedra.png";
 import tree from "../../../assets/imagens/runner/Cogumelo.png";
 
+import AudioManual from "../AudioManual/AudioManual";
+import manualFase7 from "../../../assets/sounds/Manuais/Manual_fase_7.mp3";
+
 export default function Manual_Fase_7({ onStart }) {
     return (
         <div className="manual-container">
@@ -22,6 +25,9 @@ export default function Manual_Fase_7({ onStart }) {
                 <div className="manual-logo">
                     <img src={logo} alt="Logo do jogo" />
                 </div>
+
+                {/* Botão para ouvir o manual */}
+                <AudioManual src={manualFase7} />
 
                 <h2>🏁 Manual da Fase 7 – Corrida da Memória</h2>
                 <p className="intro">

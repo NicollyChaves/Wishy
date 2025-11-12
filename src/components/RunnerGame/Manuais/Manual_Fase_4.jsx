@@ -14,6 +14,9 @@ import heart from "../../../assets/imagens/runner/Coracao.png";
 import rock from "../../../assets/imagens/runner/Pedra.png";
 import tree from "../../../assets/imagens/runner/Cogumelo.png";
 
+import AudioManual from "../AudioManual/AudioManual";
+import manualFase4 from "../../../assets/sounds/Manuais/Manual_fase_4.mp3";
+
 
 export default function Manual_Fase_4({ onStart }) {
     return (
@@ -23,6 +26,9 @@ export default function Manual_Fase_4({ onStart }) {
                 <div className="manual-logo">
                     <img src={logo} alt="Logo Jogo" />
                 </div>
+
+                {/* Botão para ouvir o manual */}
+                <AudioManual src={manualFase4} />
 
                 <h2>📖 Manual da Fase 4</h2>
                 <p className="intro">

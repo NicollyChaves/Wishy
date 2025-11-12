@@ -9,6 +9,9 @@ import char3 from "../../../assets/imagens/runner/character3.gif";
 import char4 from "../../../assets/imagens/runner/character4.gif";
 import char5 from "../../../assets/imagens/runner/character5.gif";
 
+import AudioManual from "../AudioManual/AudioManual";
+import manualFase5 from "../../../assets/sounds/Manuais/Manual_fase_5.mp3";
+
 export default function Manual_Fase_5({ onStart }) {
     return (
         <div className="manual-container">
@@ -17,6 +20,9 @@ export default function Manual_Fase_5({ onStart }) {
                 <div className="manual-logo">
                     <img src={logo} alt="Logo Jogo" />
                 </div>
+
+                {/* Botão para ouvir o manual */}
+                <AudioManual src={manualFase5} />
 
                 <h2>📖 Manual da Fase 5</h2>
                 <p className="intro">

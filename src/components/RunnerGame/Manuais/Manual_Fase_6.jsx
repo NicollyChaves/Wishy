@@ -14,6 +14,9 @@ import rock from "../../../assets/imagens/runner/Pedra.png";
 import star from "../../../assets/imagens/runner/Estrela.png";
 import heart from "../../../assets/imagens/runner/Coracao.png";
 
+import AudioManual from "../AudioManual/AudioManual";
+import manualFase6 from "../../../assets/sounds/Manuais/Manual_fase_6.mp3";
+
 export default function Manual_Fase_6({ onStart }) {
     return (
         <div className="manual-container">
@@ -22,6 +25,9 @@ export default function Manual_Fase_6({ onStart }) {
                 <div className="manual-logo">
                     <img src={logo} alt="Logo Jogo" />
                 </div>
+
+                {/* Botão para ouvir o manual */}
+                <AudioManual src={manualFase6} />
 
                 <h2>📚 Manual da Fase 6</h2>
                 <p className="intro">
