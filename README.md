@@ -30,7 +30,7 @@ Por meio de atividades gamificadas, o jogo busca:
 ---
 
 ## 🚧 Status do Projeto
-> Em desenvolvimento 🚀
+> Concluído 🚀
 
 ---
 
